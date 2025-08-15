@@ -7,223 +7,276 @@
     <link href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Gamja+Flower:wght@400&family=Poor+Story:wght@400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://i.imgur.com/BebsMfr.png.png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poor Story', cursive;
-            background: linear-gradient(135deg, #FFE4E8 0%, #FFF0F3 50%, #FFEBF0 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Floating hearts and stars animation */
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .floating-heart, .floating-star {
-            position: absolute;
-            animation: float 6s ease-in-out infinite;
-            opacity: 0.3;
-        }
-        
-        .floating-heart {
-            color: #FF69B4;
-            font-size: 1.2rem;
-            animation-delay: var(--delay, 0s);
-        }
-        
-        .floating-star {
-            color: #FFD700;
-            font-size: 1rem;
-            animation-delay: var(--delay, 0s);
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(5deg); }
-            50% { transform: translateY(-10px) rotate(-5deg); }
-            75% { transform: translateY(-25px) rotate(3deg); }
-        }
-        
-        /* Main container */
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-            position: relative;
-            z-index: 10;
-        }
-        
-/* make envelope size easy to override per breakpoint */
-.envelope {
-  --env-w: 280px;
-  --env-h: 180px;
-  width: var(--env-w);
-  height: var(--env-h);
-  position: relative; /* keep as you had */
+/* -------------------------
+   Variables globales (fácil ajuste)
+   ------------------------- */
+:root{
+  --pink-100: #FFE4E8;
+  --pink-200: #FFF0F3;
+  --pink-300: #FFEBF0;
+  --accent-1: #FF1493;
+  --accent-2: #FF69B4;
+  --accent-3: #FFB6C1;
+  --accent-4: #FFD3DC;
+  --envelope-w: clamp(220px, 28vw, 320px);
+  --envelope-h: calc(var(--envelope-w) * 0.64);
+  --transition-fast: 260ms;
+  --transition-medium: 420ms;
+  --shadow-1: 0 6px 20px rgba(255, 180, 190, 0.22);
 }
 
-.envelope:hover {
-    transform: scale(1.02) translateY(-3px);
-    filter: drop-shadow(0 8px 15px rgba(255, 180, 190, 0.22)); /* un poquito más notoria */
+/* -------------------------
+   Reset / base
+   ------------------------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.envelope-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #FFF3F5 0%, #FFE6EB 100%); /* rosa claro pero más definido */
-    border-radius: 8px;
-    border: 2px solid #FFCAD4; /* borde un poco más oscuro */
-    box-shadow: 0 6px 20px rgba(255, 180, 190, 0.22); /* sombra ligeramente más fuerte */
+html, body {
+  height: 100%;
 }
 
-.envelope-front {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #FFE6EB 0%, #FFD3DC 100%); /* frente un poquito más rosado */
-    border-radius: 8px;
-    border: 2px solid #FFB8C6; /* borde más definido */
-    transform-origin: top center;
-    transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
-    z-index: 2;
+body {
+  font-family: 'Poor Story', cursive;
+  background: linear-gradient(135deg, var(--pink-100) 0%, var(--pink-200) 50%, var(--pink-300) 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
-        
 
-/* Ensure the envelope pseudo-element is robustly centered and non-interactive */
+/* Preferencias de movimiento reducidas */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+/* -------------------------
+   Floating hearts & stars
+   ------------------------- */
+.floating-elements{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-heart,
+.floating-star {
+  position: absolute;
+  opacity: 0.28;
+  animation: float 6s ease-in-out infinite;
+  will-change: transform, opacity;
+  pointer-events: none;
+  transform-origin: center;
+}
+
+/* permitir personalizar delay por --delay */
+.floating-heart { font-size: 1.2rem; color: var(--accent-2); --delay: 0s; animation-delay: var(--delay); }
+.floating-star  { font-size: 1rem;  color: #FFD700;     --delay: 0s; animation-delay: var(--delay); }
+
+@keyframes float {
+  0%,100% { transform: translateY(0px) rotate(0deg); }
+  25%     { transform: translateY(-20px) rotate(5deg); }
+  50%     { transform: translateY(-10px) rotate(-5deg); }
+  75%     { transform: translateY(-25px) rotate(3deg); }
+}
+
+/* -------------------------
+   Contenedor principal
+   ------------------------- */
+.container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  padding:15px;
+  position:relative;
+  z-index:10;
+}
+
+/* -------------------------
+   Envelope (sobre)
+   ------------------------- */
+.envelope{
+  position:relative;
+  width: var(--envelope-w);
+  height: var(--envelope-h);
+  cursor: pointer;
+  transition: transform 300ms ease, filter 300ms ease;
+  transform-style: preserve-3d;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.envelope:hover{
+  transform: translateY(-3px) scale(1.02);
+  filter: drop-shadow(0 8px 15px rgba(255, 180, 190, 0.22));
+}
+
+/* back & front */
+.envelope-back,
+.envelope-front{
+  position:absolute;
+  inset:0;
+  border-radius:8px;
+  border: 2px solid var(--accent-3);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: var(--shadow-1);
+}
+
+/* fondo posterior ligeramente distinto */
+.envelope-back{
+  background: linear-gradient(135deg, #FFF3F5 0%, #FFE6EB 100%);
+  border-color: #FFCAD4;
+  z-index:1;
+}
+
+/* frente con origen en top center para rotar en X */
+.envelope-front{
+  background: linear-gradient(135deg, #FFE6EB 0%, var(--accent-4) 100%);
+  border-color: #FFB8C6;
+  transform-origin: top center;
+  transition: transform 800ms cubic-bezier(0.4,0,0.2,1);
+  z-index:2;
+  will-change: transform;
+}
+
+/* triangular flap invertido y más oscuro */
 .envelope-front::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: -2px;
   left: 50%;
-  transform: translate3d(-50%, 0, 0) rotate(180deg);
-  -webkit-transform: translate3d(-50%, 0, 0) rotate(180deg);
+  transform: translateX(-50%);
+  pointer-events: none;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-  border-radius: 4px;
+  will-change: transform, opacity;
+
+
+  width: calc(var(--envelope-w, 280px) * 0.975);
+  height: calc(var(--envelope-h, 180px) * 0.65); /* más alto que 0.5 */
+
+  /* punta hacia abajo */
+  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+
+  /* color más oscuro que el frente */
+  background: linear-gradient(135deg, #F8B7C9 0%, #E6738E 100%);
+
+  box-shadow: 0 6px 20px rgba(180, 100, 120, 0.18);
+  border-radius: 0 0 6px 6px; /* redondeo en la parte inferior */
+  z-index: 3;
+  transition: transform 600ms ease, opacity 300ms ease;
 }
 
-.envelope.opened .envelope-front {
-    transform: rotateX(-105deg); /* menos inclinación para coordinar con el alto real */
-    transition: transform 0.6s ease-in-out;
+
+/* estado abierto (clase .opened en .envelope) */
+.envelope.opened .envelope-front{
+  /* rotamos en X para abrir la solapa */
+  transform: rotateX(-105deg);
+  transition: transform 600ms ease-in-out;
 }
 
-        
-       /* Heart seal */
-.heart-seal {
-    position: absolute;
-    top: 78px; /* lo subimos un poco */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70px; /* más grande */
-    height: 70px; /* más grande */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.6rem; /* aumenta tamaño del corazón */
-    color: #FF1493;
-    z-index: 3;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    user-select: none;
-    background: radial-gradient(circle, rgba(255, 20, 147, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-    border: 2px solid rgba(255, 20, 147, 0.2);
+/* -------------------------
+   Heart seal (sello)
+   ------------------------- */
+/* usamos transform con translateX + scale para conservar centrado siempre */
+.heart-seal{
+  position:absolute;
+  top: calc(50% - 8px); /* centrado vertical aproximado respecto al sobre */
+  left:50%;
+  transform: translateX(-50%) scale(1);
+  width: 70px;
+  height: 70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2.6rem;
+  color: var(--accent-1);
+  z-index:3;
+  cursor:pointer;
+  transition: transform 300ms ease, color 200ms ease, background 200ms ease;
+  user-select:none;
+  background: radial-gradient(circle, rgba(255,20,147,0.1) 0%, transparent 70%);
+  border-radius:50%;
+  border: 2px solid rgba(255,20,147,0.2);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.28);
+  will-change: transform;
+  touch-action: manipulation;
 }
 
-        
-        .heart-seal:hover {
-            transform: translateX(-50%) scale(1.1);
-            color: #FF69B4;
-            background: radial-gradient(circle, rgba(255, 20, 147, 0.2) 0%, transparent 70%);
-        }
-        
-        .heart-seal.crack-1 {
-            animation: crack1 0.3s ease;
-        }
-        
-        .heart-seal.crack-2 {
-            animation: crack2 0.3s ease;
-        }
-        
-        .heart-seal.crack-3 {
-            animation: crack3 0.5s ease forwards;
-        }
-        
-        @keyframes crack1 {
-            0% { transform: translateX(-50%) scale(1); }
-            25% { transform: translateX(-50%) scale(1.3); filter: brightness(1.5); }
-            50% { transform: translateX(-50%) scale(0.9); filter: brightness(2); }
-            100% { transform: translateX(-50%) scale(1.1); }
-        }
-        
-        @keyframes crack2 {
-            0% { transform: translateX(-50%) scale(1.1); }
-            25% { transform: translateX(-50%) scale(1.4); filter: brightness(2); }
-            50% { transform: translateX(-50%) scale(0.8); filter: brightness(3); }
-            100% { transform: translateX(-50%) scale(1.2); }
-        }
-        
-        @keyframes crack3 {
-            0% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-            25% { transform: translateX(-50%) scale(1.6); filter: brightness(4); }
-            50% { transform: translateX(-50%) scale(0.5); }
-            100% { transform: translateX(-50%) scale(0); opacity: 0; }
-        }
-        
-/* --- Smooth open/close for the paper (replace previous .letter-paper block) --- */
+/* hover / active (combinaciones seguras) */
+.heart-seal:hover,
+.heart-seal:focus-visible{
+  transform: translateX(-50%) scale(1.1);
+  color: var(--accent-2);
+  background: radial-gradient(circle, rgba(255,20,147,0.2) 0%, transparent 70%);
+  outline: none;
+}
 
-.letter-paper {
+.heart-seal:active{
+  transform: translateX(-50%) scale(0.94);
+}
+
+/* animaciones "crack" (se usan añadiendo clases crack-1..3) */
+.heart-seal.crack-1 { animation: crack1 300ms ease both; }
+.heart-seal.crack-2 { animation: crack2 300ms ease both; }
+.heart-seal.crack-3 { animation: crack3 500ms ease forwards; }
+
+@keyframes crack1 {
+  0%   { transform: translateX(-50%) scale(1); }
+  25%  { transform: translateX(-50%) scale(1.3); filter: brightness(1.5); }
+  50%  { transform: translateX(-50%) scale(0.92); filter: brightness(2); }
+  100% { transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes crack2 {
+  0%   { transform: translateX(-50%) scale(1.1); }
+  25%  { transform: translateX(-50%) scale(1.4); filter: brightness(2); }
+  50%  { transform: translateX(-50%) scale(0.82); filter: brightness(3); }
+  100% { transform: translateX(-50%) scale(1.18); }
+}
+
+@keyframes crack3 {
+  0%   { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  25%  { transform: translateX(-50%) scale(1.6); filter: brightness(4); }
+  50%  { transform: translateX(-50%) scale(0.5); }
+  100% { transform: translateX(-50%) scale(0); opacity: 0; }
+}
+
+/* -------------------------
+   Letter / Paper (modal)
+   ------------------------- */
+.letter-paper{
   position: fixed;
   top: 50%;
   left: 50%;
-  width: auto;
+  width: 260px;
   height: auto;
-
-  /* usamos max-* para animaciones más suaves */
-  max-width: min(92vw, 640px);
-  max-height: min(86vh, 520px);
+  max-width: 260px;
+  max-height: 170px;
   box-sizing: border-box;
-
   background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
-  border: 2px solid #FFB6C1;
+  border: 2px solid var(--accent-3);
   border-radius: 12px;
   padding: 18px;
-
   transform: translate(-50%, -45%) translateY(10px);
   opacity: 0;
   pointer-events: none;
-
-  /* transición consistente para abrir y cerrar (suave, reversible) */
   transition:
-    opacity 420ms cubic-bezier(.2,.9,.3,1),
-    transform 420ms cubic-bezier(.2,.9,.3,1),
-    max-width 420ms cubic-bezier(.2,.9,.3,1),
-    max-height 420ms cubic-bezier(.2,.9,.3,1),
+    opacity var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+    transform var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+    max-width var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+    max-height var(--transition-medium) cubic-bezier(.2,.9,.3,1),
     padding 320ms cubic-bezier(.2,.9,.3,1),
     box-shadow 320ms ease,
     border-radius 320ms ease,
     filter 360ms ease;
-
   will-change: transform, opacity, max-width, max-height;
   z-index: 100;
   box-shadow: 0 14px 40px rgba(0,0,0,0.18);
@@ -232,16 +285,12 @@
   filter: blur(6px);
 }
 
-/* Estado "expanding" (visible) — anima desde los max-* hacia valores mayores */
-.letter-paper.expanding {
-  /* límites finales (animamos max-*, no width/height fijos) */
-  max-width: min(92vw, 900px);
-  max-height: min(86vh, 720px);
-
-  /* opcional: cuando se vea grande, permitir que el elemento crezca dinámicamente */
+/* abierto / expandiendo */
+.letter-paper.expanding{
+  max-width: min(900px, 92vw);
+  max-height: min(720px, 86vh);
   width: auto;
   height: auto;
-
   transform: translate(-50%, -50%) translateY(0);
   opacity: 1;
   pointer-events: auto;
@@ -252,12 +301,10 @@
   box-shadow: 0 18px 60px rgba(0,0,0,0.22);
 }
 
-/* Variante semi-fullscreen (mantiene márgenes pequeños) */
-.letter-paper.fullscreen {
+/* variante fullscreen (mantiene márgenes) */
+.letter-paper.fullscreen{
   max-width: calc(100vw - 4vw);
   max-height: calc(100vh - 4vh);
-  width: auto;
-  height: auto;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -268,68 +315,78 @@
   opacity: 1;
   pointer-events: auto;
   filter: blur(0);
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
-/* Contenido: aparece con pequeño delay al abrir, desaparece rápido al cerrar */
-.letter-content {
+/* -------------------------
+   Contenido interno de la carta
+   ------------------------- */
+.letter-content{
   opacity: 0;
-  /* duraciones cortas y delay controlado */
-  transition: opacity 260ms ease;
-  transition-delay: 180ms; /* se muestra después del inicio de apertura */
+  transition: opacity var(--transition-fast) ease;
+  transition-delay: 180ms;
   font-family: 'Poor Story', cursive;
   line-height: 1.65;
   color: #4A4A4A;
   font-size: clamp(0.95rem, 1.25vw, 1.05rem);
-  height: 100%;
   width: 100%;
   position: relative;
   box-sizing: border-box;
   overflow: visible;
   padding-right: 6px;
+  will-change: opacity;
 }
 
-/* Mostrar contenido cuando está expandido (delay mantiene sensación natural) */
+/* mostrar texto cuando el paper está expandido o fullscreen */
 .letter-paper.expanding .letter-content,
-.letter-paper.fullscreen .letter-content {
+.letter-paper.fullscreen .letter-content{
   opacity: 1;
   transition-delay: 180ms;
 }
 
-/* Si NO está expandido (cierre), quitar delay para que el texto desaparezca inmediatamente
-   y evitar saltos visuales mientras el contenedor se encoge */
-.letter-paper:not(.expanding) .letter-content {
+/* ocultar inmediatamente si NO está expandido (sin delay) */
+.letter-paper:not(.expanding) .letter-content{
   opacity: 0;
   transition-delay: 0ms;
 }
 
-/* Titular y párrafos (sin cambios funcionales, solo pequeños refinamientos) */
-.letter-content h1 {
+/* títulos y párrafos */
+.letter-content h1{
   font-family: 'Cute Font', cursive;
-  font-size: clamp(1.6rem, 2.4vw, 3rem);
-  color: #FF1493;
-  text-align: center;
-  margin-bottom: 18px;
-  text-shadow: 2px 2px 6px rgba(255, 105, 180, 0.22);
-  line-height: 1.15;
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  color: var(--accent-1);
+  text-align:center;
+  margin-bottom:18px;
+  text-shadow: 2px 2px 6px rgba(255,105,180,0.22);
+  line-height:1.15;
 }
 
-.letter-content p {
-  margin-bottom: 14px;
-  text-align: justify;
-  hyphens: auto;
+.letter-content p{
+  margin-bottom:14px;
+  text-align:justify;
+  hyphens:auto;
 }
 
-.letter-content .signature {
-  text-align: right;
+.letter-content .signature{
+  text-align:right;
   font-family: 'Cute Font', cursive;
-  font-size: 1.15rem;
-  color: #FF69B4;
-  margin-top: 22px;
+  font-size:1.15rem;
+  color: var(--accent-2);
+  margin-top:22px;
 }
 
-/* Sutileza visual: sombra interior leve cuando está abierto */
+.letter-content .highlight{
+  color: var(--accent-1);
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-3);
+  text-decoration-thickness: 2px;
+}
+
+/* sutil sombra interior cuando está abierto */
 .letter-paper.expanding::after,
-.letter-paper.fullscreen::after {
+.letter-paper.fullscreen::after{
   content: "";
   position: absolute;
   inset: 0;
@@ -338,300 +395,144 @@
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
 }
 
-.letter-content .highlight { 
-    color: #FF1493; 
-    font-weight: bold; 
-    text-decoration: underline; 
-    text-decoration-color: #FFB6C1; 
-    text-decoration-thickness: 2px; 
+/* -------------------------
+   Close button
+   ------------------------- */
+.close-button{
+  position: fixed;
+  bottom: clamp(70px, 10vh, 110px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-family: 'Poor Story', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
+  box-shadow: 0 6px 15px rgba(255,105,180,0.4);
+  z-index: 1000;
 }
 
-        /* Close button */
-        .close-button {
-            position: fixed;
-            bottom: 110px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #FF69B4, #FF1493);
-            color: white;
-            border: none;
-            padding: clamp(10px, 2vw, 14px) clamp(18px, 4vw, 30px);
-            border-radius: 25px;
-            font-family: 'Poor Story', cursive;
-            font-size: 1rem;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 15px rgba(255, 105, 180, 0.4);
-            z-index: 1000;
-        }
-        
-        .close-button.visible {
-            opacity: 1;
-        }
-        
-        .close-button:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.6);
-        }
-        
-        /* Thank you message */
-        .thank-you {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #FFE4E8, #FFF0F3);
-            padding: 30px;
-            border-radius: 15px;
-            border: 3px solid #FF69B4;
-            text-align: center;
-            font-family: 'Cute Font', cursive;
-            font-size: 1.5rem;
-            color: #FF1493;
-            opacity: 0;
-            scale: 0;
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 1001;
-            box-shadow: 0 12px 30px rgba(255, 105, 180, 0.3);
-        }
-        
-        .thank-you.visible {
-            opacity: 1;
-            scale: 1;
-        }
-        
-        .thank-you .heart {
-            font-size: 2.5rem;
-            color: #FF1493;
-            margin: 15px 0;
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        /* Instructions */
-        .instructions {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-family: 'Poor Story', cursive;
-            color: #FF69B4;
-            font-size: 1.1rem;
-            opacity: 0.8;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.4; }
-        }
-        
-        /* Copyright — colocado por detrás del paper */
-.copyright {
+.close-button.visible{ opacity: 1; }
+
+.close-button:hover,
+.close-button:focus-visible{
+  transform: translateX(-50%) scale(1.05);
+  box-shadow: 0 8px 20px rgba(255,105,180,0.6);
+  outline: none;
+}
+
+/* -------------------------
+   Thank you message
+   ------------------------- */
+.thank-you{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, #FFE4E8, #FFF0F3);
+  padding: 30px;
+  border-radius: 15px;
+  border: 3px solid var(--accent-2);
+  text-align:center;
+  font-family: 'Cute Font', cursive;
+  font-size:1.5rem;
+  color: var(--accent-1);
+  opacity: 0;
+  transition: transform 800ms cubic-bezier(0.25,0.46,0.45,0.94), opacity 400ms ease;
+  z-index: 1001;
+  box-shadow: 0 12px 30px rgba(255,105,180,0.3);
+}
+
+.thank-you.visible{
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.thank-you .heart{
+  font-size: 2.5rem;
+  color: var(--accent-1);
+  margin: 15px 0;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* -------------------------
+   Instructions & copyright
+   ------------------------- */
+.instructions{
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align:center;
+  font-family: 'Poor Story', cursive;
+  color: var(--accent-2);
+  font-size: 1.1rem;
+  opacity: 0.8;
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
+}
+
+.copyright{
   position: fixed;
   bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.7rem;
-  color: #FF69B4;
+  color: var(--accent-2);
   opacity: 0.6;
-  text-align: center;
-
-  /* z-index menor que .letter-paper (que usa z-index:100) */
-  z-index: 40;
-
-  /* evitar interacción accidental cuando el paper está encima */
-  pointer-events: none;
-
-  /* transición sutil si quieres atenuarlo cuando el modal abre */
+  text-align:center;
+  z-index:40;
+  pointer-events:none;
   transition: opacity 260ms ease, transform 260ms ease;
 }
 
-/* Si aplicas la clase .body--modal-open al <body> al abrir el paper
-   (recomendado), atenuamos aún más el copyright para que no compita visualmente */
-.body--modal-open .copyright {
+/* Si aplicas la clase .body--modal-open en <body> al abrir */
+.body--modal-open .copyright{
   opacity: 0.28;
   transform: translateX(-50%) translateY(4px);
 }
 
-        
-        .hidden {
-            display: none;
-        }
-        
-        /* Improved touch interaction */
-        .heart-seal:active {
-            transform: translateX(-50%) scale(0.9);
-        }
-        
-        /* Prevent text selection on touch */
-        .envelope, .heart-seal, .instructions {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* Better scroll behavior on mobile */
-        .letter-paper.fullscreen {
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
+/* utilidad */
+.hidden{ display:none !important; }
 
-        /* ------------------------------
-   Responsive: desde PC grande a Smartwatch
-   Pegar al final del <style>
-   ------------------------------ */
-
-/* Extra large desktop (1600px+) */
-@media (min-width: 1600px) {
-  .envelope { width: 420px; height: 270px; }
-  .envelope-front::before { border-left: 210px solid transparent; border-right: 210px solid transparent; border-bottom: 190px solid #FFB6C1; }
-  .heart-seal { top: 108px; width: 110px; height: 110px; font-size: 4rem; }
-  .letter-paper { width: 640px; height: 520px; }
-  .letter-paper.fullscreen { padding: 40px; }
-  .letter-content h1 { font-size: 3rem; }
-  .close-button { bottom: 120px; padding: 14px 30px; font-size: 1.05rem; }
-  .instructions { bottom: 80px; font-size: 1.15rem; }
-  .thank-you { font-size: 1.6rem; padding: 36px; }
+/* prevenir selección de texto donde no conviene */
+.envelope,
+.heart-seal,
+.instructions{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-/* Desktop / Large laptop (1200px–1599px) */
-@media (min-width: 1200px) and (max-width: 1599px) {
-  .envelope { width: 360px; height: 230px; }
-  .envelope-front::before { border-left: 178px solid transparent; border-right: 178px solid transparent; border-bottom: 160px solid #FFB6C1; }
-  .heart-seal { top: 95px; width: 90px; height: 90px; font-size: 3.2rem; }
-  .letter-paper { width: 520px; height: 420px; }
-  .letter-content h1 { font-size: 2.6rem; }
-  .close-button { bottom: 115px; }
-  .instructions { bottom: 70px; }
+/* -------------------------
+   Responsive tweaks (opcional)
+   ------------------------- */
+@media (max-width: 420px) {
+  :root { --envelope-w: 220px; }
+  .heart-seal { width:60px; height:60px; font-size:2.1rem; top: calc(50% - 4px); }
+  .close-button { padding: 10px 18px; font-size:0.95rem; bottom: 64px; }
+  .instructions { font-size: 1rem; bottom: 36px; }
 }
 
-/* Medium laptop / small desktop (992px–1199px) */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .envelope { width: 320px; height: 205px; }
-  .envelope-front::before { border-left: 150px solid transparent; border-right: 150px solid transparent; border-bottom: 140px solid #FFB6C1; }
-  .heart-seal { top: 88px; width: 80px; height: 80px; font-size: 3rem; }
-  .letter-paper { width: 420px; height: 350px; }
-  .letter-content h1 { font-size: 2.4rem; }
-}
 
-/* Tablets landscape / large tablets (769px–991px) */
-@media (min-width: 769px) and (max-width: 991px) {
-  .envelope { width: 300px; height: 190px; }
-  .envelope-front::before { border-left: 138px solid transparent; border-right: 138px solid transparent; border-bottom: 125px solid #FFB6C1; }
-  .heart-seal { top: 82px; width: 76px; height: 76px; font-size: 2.8rem; }
-  .letter-paper { width: 360px; height: 320px; }
-  .letter-content h1 { font-size: 2.2rem; }
-  .close-button { bottom: 110px; }
-  .instructions { bottom: 60px; font-size: 1.05rem; }
-}
-
-/* Tablets portrait / Phablets (600px–768px) */
-@media (min-width: 600px) and (max-width: 768px) {
-  .envelope { width: 280px; height: 180px; transform-origin: center top; }
-  .envelope-front::before { border-left: 128px solid transparent; border-right: 128px solid transparent; border-bottom: 115px solid #FFB6C1; }
-  .heart-seal { top: 78px; width: 72px; height: 72px; font-size: 2.4rem; }
-  .letter-paper { width: 320px; height: 300px; }
-  .letter-paper.fullscreen { padding: 22px; }
-  .letter-content h1 { font-size: 2rem; }
-  .instructions { bottom: 55px; font-size: 1rem; }
-}
-
-/* Ajustes landscape para móviles estrechos */
-@media (max-width: 480px) and (orientation: landscape) {
-  .container { padding: 8px; align-items: flex-start; }
-  .envelope { transform: scale(0.95); margin-top: 10px; }
-  /* Mantén el paper fullscreen pero reduce padding para paisajes pequeños */
-  .letter-paper { padding: 10px; height: 100vh; width: 100vw; top: 0; left: 0; }
-  .instructions { bottom: 18px; left: 50%; transform: translateX(-50%); }
-}
-
-/* Consolidación: móviles grandes hasta tablets pequeñas (>=600px -> cambiamos a layout flotante centrado) */
-/* A partir de 600px empezamos a devolver tamaños fijos y comportamiento "no-fullscreen" */
-@media (min-width: 600px) {
-  /* restablecemos el comportamiento de carta "centrada" */
-  .letter-paper {
-    position: absolute;   /* o fixed según tu layout general */
-    width: 320px;         /* valor base para tablets pequeños */
-    height: 300px;
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%, -50%, 0) scale(1);
-    border-radius: 12px;
-    padding: 22px;
-    overflow: visible;
-  }
-
-  /* encuadre escalable para encabezados */
-  .letter-content h1 { font-size: clamp(1.8rem, 2.5vw, 2rem); }
-  .letter-content { font-size: 1rem; line-height: 1.45; }
-}
-
-/* Medium/large tablets and laptops: escalado progresivo */
-/* 600–768 (tablets portrait / phablets) */
-@media (min-width: 600px) and (max-width: 768px) {
-  .envelope { width: 280px; height: 180px; transform-origin: center top; }
-  .envelope-front::before { border-left: 128px solid transparent; border-right: 128px solid transparent; border-bottom: 115px solid #FFB6C1; }
-  .heart-seal { top: 78px; width: 72px; height: 72px; font-size: 2.4rem; }
-  .letter-paper { width: 320px; height: 300px; padding: 22px; }
-  .close-button { bottom: 95px; }
-  .instructions { bottom: 55px; font-size: 1rem; }
-}
-
-/* 769–991 (tablets landscape / small laptops) */
-@media (min-width: 769px) and (max-width: 991px) {
-  .envelope { width: 300px; height: 190px; }
-  .envelope-front::before { border-left: 138px solid transparent; border-right: 138px solid transparent; border-bottom: 125px solid #FFB6C1; }
-  .heart-seal { top: 82px; width: 76px; height: 76px; font-size: 2.8rem; }
-  .letter-paper { width: 360px; height: 320px; padding: 26px; }
-  .letter-content h1 { font-size: 2.2rem; }
-}
-
-/* 992–1199 (small desktop) */
-@media (min-width: 992px) and (max-width: 1199px) {
-  .envelope { width: 320px; height: 205px; }
-  .envelope-front::before { border-left: 150px solid transparent; border-right: 150px solid transparent; border-bottom: 140px solid #FFB6C1; }
-  .heart-seal { top: 88px; width: 80px; height: 80px; font-size: 3rem; }
-  .letter-paper { width: 420px; height: 350px; padding: 30px; }
-  .letter-content h1 { font-size: 2.4rem; }
-}
-
-/* 1200–1599 (desktop) */
-@media (min-width: 1200px) and (max-width: 1599px) {
-  .envelope { width: 360px; height: 230px; }
-  .envelope-front::before { border-left: 178px solid transparent; border-right: 178px solid transparent; border-bottom: 160px solid #FFB6C1; }
-  .heart-seal { top: 95px; width: 90px; height: 90px; font-size: 3.2rem; }
-  .letter-paper { width: 520px; height: 420px; padding: 36px; }
-  .letter-content h1 { font-size: 2.6rem; }
-}
-
-/* >=1600 (extra large desktop) */
-@media (min-width: 1600px) {
-  .envelope { width: 420px; height: 270px; }
-  .envelope-front::before { border-left: 210px solid transparent; border-right: 210px solid transparent; border-bottom: 190px solid #FFB6C1; }
-  .heart-seal { top: 108px; width: 110px; height: 110px; font-size: 4rem; }
-  .letter-paper { width: 640px; height: 520px; padding: 40px; }
-  .letter-content h1 { font-size: 3rem; }
-}
-
-/* Respect reduced-motion & high-contrast preferences */
-@media (prefers-reduced-motion: reduce) {
-  .floating-heart, .floating-star, .heart-seal, .envelope { animation: none !important; transition: none !important; }
-}
-@media (prefers-contrast: more) {
-  body { background: linear-gradient(135deg, #FFDDE6 0%, #FFF0F3 50%, #FFE8F2 100%); }
-  .envelope-back, .envelope-front { box-shadow: 0 8px 30px rgba(0,0,0,0.25); border-width: 3px; }
-  .letter-paper { border-width: 3px; }
-}
     </style>
 </head>
 <body>
@@ -1324,6 +1225,9 @@
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
   };
 })();
+
+
+
     </script>
 </body>
 </html>
