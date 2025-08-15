@@ -6,8 +6,8 @@
     <title>소정에게 보내는 사랑 편지 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Gamja+Flower:wght@400&family=Poor+Story:wght@400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://i.imgur.com/BebsMfr.png.png">
-       <style>
-        /* -------------------------
+<style>
+/* -------------------------
    Variables globales (fácil ajuste)
    ------------------------- */
 :root{
@@ -18,20 +18,20 @@
   --accent-2: #FF69B4;
   --accent-3: #FFB6C1;
   --accent-4: #FFD3DC;
-  
+
   /* Variables responsivas para el sobre */
   --envelope-w: clamp(280px, 35vw, 380px);
   --envelope-h: calc(var(--envelope-w) * 0.64);
-  
+
   /* Variables responsivas para espaciado */
   --container-padding: clamp(15px, 4vw, 25px);
   --letter-padding: clamp(18px, 3.5vw, 32px);
-  
+
   /* Variables responsivas para tipografía */
   --font-size-base: clamp(0.9rem, 2.2vw, 1.05rem);
   --font-size-title: clamp(1.4rem, 4vw, 2.2rem);
   --font-size-instructions: clamp(0.95rem, 2.5vw, 1.1rem);
-  
+
   /* Transiciones y sombras */
   --transition-fast: 260ms;
   --transition-medium: 420ms;
@@ -89,10 +89,10 @@ body {
 
 /* Preferencias de movimiento reducidas */
 @media (prefers-reduced-motion: reduce) {
-  * { 
-    animation-duration: 0.001ms !important; 
-    animation-iteration-count: 1 !important; 
-    transition-duration: 0.001ms !important; 
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
 
@@ -116,18 +116,18 @@ body {
   transform-origin: center;
 }
 
-.floating-heart { 
-  font-size: clamp(1rem, 2.5vw, 1.2rem); 
-  color: var(--accent-2); 
-  --delay: 0s; 
-  animation-delay: var(--delay); 
+.floating-heart {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--accent-2);
+  --delay: 0s;
+  animation-delay: var(--delay);
 }
 
-.floating-star { 
-  font-size: clamp(0.8rem, 2vw, 1rem); 
-  color: #FFD700; 
-  --delay: 0s; 
-  animation-delay: var(--delay); 
+.floating-star {
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  color: #FFD700;
+  --delay: 0s;
+  animation-delay: var(--delay);
 }
 
 @keyframes float {
@@ -284,7 +284,7 @@ body {
   .heart-seal:hover{
     transform: translateX(-50%) scale(1.05);
   }
-  
+
   .heart-seal:active{
     transform: translateX(-50%) scale(0.92);
   }
@@ -369,22 +369,49 @@ body {
   box-shadow: var(--shadow-modal);
 }
 
+/* FULLSCREEN: reglas reforzadas para ocupar TODO el viewport (incluye safe-area para notch) */
 .letter-paper.fullscreen{
-  max-width: calc(100vw - clamp(8px, 2vw, 4vw));
-  max-height: calc(100vh - clamp(8px, 2vh, 4vh));
-  max-height: calc(100dvh - clamp(8px, 2vh, 4vh)); /* Para móviles */
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: clamp(24px, 5vw, 28px);
-  border-radius: clamp(8px, 1.5vw, 10px);
-  box-shadow: var(--shadow-modal);
-  overflow-y: auto;
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  width: 100vw;
+  height: 100vh;
+  /* móviles modernos: usar 100dvh para evitar pestañas del navegador */
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  left: 0;
+  top: 0;
+  transform: none;
+  padding: max(clamp(18px, 4vw, 28px), env(safe-area-inset-top, 18px)) max(clamp(18px, 4vw, 28px), env(safe-area-inset-right, 18px)) max(clamp(18px, 4vw, 28px), env(safe-area-inset-bottom, 18px)) max(clamp(18px, 4vw, 28px), env(safe-area-inset-left, 18px));
+  border-radius: 0;
+  box-shadow: none;
+  overflow: auto;
   opacity: 1;
   pointer-events: auto;
   filter: blur(0);
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+}
+
+/* Si quieres que 'expanding' también ocupe toda la pantalla en pantallas pequeñas:
+   ENFOCADO: solo para viewports pequeños — no sobrescribe escritorio grande. */
+@media (max-width: 900px), (max-height: 700px) {
+  .letter-paper.expanding{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    left: 0;
+    top: 0;
+    transform: none;
+    border-radius: 0;
+    padding: max(clamp(16px, 4vw, 22px), env(safe-area-inset-top, 16px)) max(clamp(16px, 4vw, 22px), env(safe-area-inset-right, 16px)) max(clamp(16px, 4vw, 22px), env(safe-area-inset-bottom, 16px)) max(clamp(16px, 4vw, 22px), env(safe-area-inset-left, 16px));
+    overflow-y: auto;
+    box-shadow: none;
+  }
 }
 
 /* Ajustes específicos para móviles pequeños */
@@ -497,8 +524,8 @@ body {
   min-height: 44px; /* Área táctil mínima */
 }
 
-.close-button.visible{ 
-  opacity: 1; 
+.close-button.visible{
+  opacity: 1;
   display: inline-block;
   pointer-events: auto;
 }
@@ -516,7 +543,7 @@ body {
     min-height: 48px;
     padding: clamp(12px, 3vw, 14px) clamp(24px, 6vw, 28px);
   }
-  
+
   .close-button:hover{
     transform: translateX(-50%) scale(1.02);
   }
@@ -610,8 +637,8 @@ body {
 /* -------------------------
    Utilidades y mejoras adicionales
    ------------------------- */
-.hidden{ 
-  display: none !important; 
+.hidden{
+  display: none !important;
 }
 
 /* Prevenir selección de texto donde no conviene */
@@ -640,16 +667,16 @@ body {
     min-height: 100vh;
     padding: clamp(8px, 2vw, 15px);
   }
-  
+
   .instructions {
     bottom: clamp(20px, 4vh, 30px);
     font-size: clamp(0.8rem, 2vw, 0.95rem);
   }
-  
+
   .close-button {
     bottom: clamp(30px, 6vh, 50px);
   }
-  
+
   .letter-paper.expanding,
   .letter-paper.fullscreen {
     max-height: calc(100vh - 20px);
@@ -662,12 +689,13 @@ body {
     max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);
     max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);
   }
-  
+
   .close-button {
     bottom: calc(clamp(50px, 8vh, 110px) + env(safe-area-inset-bottom));
   }
 }
-    </style>
+</style>
+
 </head>
 <body>
     <!-- Floating decorative elements -->
@@ -683,7 +711,7 @@ body {
         
         <!-- Instructions -->
         <div class="instructions" id="instructions">
-            💕 편지를 열려면 하트를 3번 터치하세요 💕
+            편지를 열려면 하트를 3번 터치하세요
         </div>
     </div>
     
