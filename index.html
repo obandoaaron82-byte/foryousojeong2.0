@@ -562,17 +562,30 @@ body {
     padding-left: max(12px, env(safe-area-inset-left));
   }
 
-  .close-button {
+    .close-button {
+    display: none;               /* por defecto oculto, se mostrará cuando se añada .visible */
     position: fixed;
     right: max(12px, env(safe-area-inset-right));
     top: max(10px, env(safe-area-inset-top));
-    transform: none;
-    padding: 10px 14px;
+    width: 44px;                 /* tamaño táctil razonable */
+    height: 44px;
+    padding: 8px;
+    font-size: 1rem;
     border-radius: 999px;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    z-index: 2000;
+    transform: none !important;  /* evitar escalados no deseados */
+    transition: transform .12s ease, opacity .18s ease;
+    touch-action: manipulation;
+  }
+
+  /* Cuando tenga la clase visible se muestra (evitamos display:block por herencia) */
+  .close-button.visible {
+    display: inline-flex;
     opacity: 1;
-    z-index: 1200;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    touch-action: manipulation; /* Evita retraso de 300ms */
   }
 
   .close-button:hover,
@@ -622,11 +635,9 @@ body {
     font-size: 0.85rem;
   }
 
-  .close-button {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+  .close-button { width: 40px; height: 40px; font-size: .95rem; padding: 6px; }
   }
-}
+
 
     </style>
 </head>
@@ -743,7 +754,7 @@ body {
         © 2025 Aaron E. Obando & 박소정 — Made with 💖 for 소정 (foryousojeong) · v2.1
     </div>
 
-    <script>
+<script>
 /* -----------------------
    Helpers & selects
    ----------------------- */
@@ -757,7 +768,6 @@ const mainContainer = document.getElementById('mainContainer');
 const floatingElements = document.getElementById('floatingElements');
 
 function getClientXY(e) {
-  // works for pointer events, mouse events, and touch events
   if (!e) return { x: 0, y: 0 };
   if (e.clientX !== undefined && e.clientY !== undefined) return { x: e.clientX, y: e.clientY };
   if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
@@ -766,26 +776,87 @@ function getClientXY(e) {
 }
 
 /* -----------------------
+   preferencia: contenedor de scroll real (dentro del letterPaper)
+   ----------------------- */
+const scrollContainer = letterPaper ? letterPaper.querySelector('.letter-content') : null;
+
+/* -----------------------
+   Safe helpers to show/hide the close button
+   - hideCloseButtonInstant(): guaranteed to hide immediately (used on init & reset)
+   - showCloseButton(): anim-friendly show (used only when at bottom)
+   ----------------------- */
+function hideCloseButtonInstant() {
+  if (!closeButton) return;
+  closeButton.classList.remove('visible');
+  // inline styles to ensure CSS doesn't flash it visible
+  closeButton.style.display = 'none';
+  closeButton.style.opacity = '0';
+  closeButton.style.pointerEvents = 'none';
+  closeButton.setAttribute('aria-hidden', 'true');
+}
+
+function showCloseButton() {
+  if (!closeButton) return;
+  // make visible in an atomic, animation-friendly way
+  closeButton.style.display = '';
+  // force a frame so CSS transitions can run if present
+  requestAnimationFrame(() => {
+    closeButton.classList.add('visible');
+    closeButton.style.opacity = '1';
+    closeButton.style.pointerEvents = 'auto';
+    closeButton.removeAttribute('aria-hidden');
+    updateCloseButtonForViewport();
+  });
+}
+
+/* Ajustes visuales y funcionales del botón de cerrar para mobile */
+function updateCloseButtonForViewport() {
+  if (!closeButton) return;
+  const isMobile = window.innerWidth <= 600 || window.innerHeight <= 600;
+  if (isMobile) {
+    closeButton.classList.add('close-mobile');
+    closeButton.style.width = closeButton.style.width || '44px';
+    closeButton.style.height = closeButton.style.height || '44px';
+    closeButton.style.padding = closeButton.style.padding || '8px';
+    closeButton.style.fontSize = closeButton.style.fontSize || '1rem';
+    closeButton.style.right = closeButton.style.right || '12px';
+    closeButton.style.top = closeButton.style.top || '12px';
+    // only alter display for visible state (showCloseButton handles it)
+    if (closeButton.classList.contains('visible')) {
+      closeButton.style.display = closeButton.style.display || 'inline-flex';
+    }
+  } else {
+    closeButton.classList.remove('close-mobile');
+    closeButton.style.width = '';
+    closeButton.style.height = '';
+    closeButton.style.padding = '';
+    closeButton.style.fontSize = '';
+    closeButton.style.right = '';
+    closeButton.style.top = '';
+    // allow stylesheet to control display when not mobile (but keep aria)
+    if (!closeButton.classList.contains('visible')) {
+      closeButton.style.display = 'none';
+    } else {
+      closeButton.style.display = '';
+    }
+  }
+}
+window.addEventListener('resize', updateCloseButtonForViewport, { passive: true });
+window.addEventListener('orientationchange', () => { setTimeout(updateCloseButtonForViewport, 80); }, { passive: true });
+
+/* -----------------------
    Body scroll lock (mobile-safe)
    ----------------------- */
 let _bodyTouchHandler = null;
 function lockBodyScroll() {
-  // hide scrollbars & prevent scroll outside content
   document.body.classList.add('body--modal-open');
   document.body.style.overflow = 'hidden';
-  // we add a touchmove listener that prevents scroll except inside .letter-content
   _bodyTouchHandler = function (evt) {
     const insideContent = evt.target.closest && evt.target.closest('.letter-content');
-    if (!insideContent) {
-      // prevent background touch scrolling
-      evt.preventDefault();
-    }
-    // else allow native scroll inside .letter-content
+    if (!insideContent) evt.preventDefault();
   };
-  // passive: false so we can preventDefault
   document.addEventListener('touchmove', _bodyTouchHandler, { passive: false });
 }
-
 function unlockBodyScroll() {
   document.body.classList.remove('body--modal-open');
   document.body.style.overflow = '';
@@ -796,7 +867,7 @@ function unlockBodyScroll() {
 }
 
 /* -----------------------
-   Floating elements (unchanged lógicamente)
+   Floating elements
    ----------------------- */
 function createFloatingElements() {
   const hearts = ['💖', '💕', '💗', '💘', '🩷'];
@@ -831,7 +902,7 @@ function createFloatingElements() {
 }
 
 /* -----------------------
-   Heart click logic (pointer-friendly)
+   Heart logic & open/close
    ----------------------- */
 let clickCount = 0;
 let isLetterOpen = false;
@@ -846,7 +917,6 @@ function createSparkles(x, y) {
     sparkle.style.left = (x - 10 + Math.random() * 20) + 'px';
     sparkle.style.top = (y - 10 + Math.random() * 20) + 'px';
     sparkle.style.fontSize = window.innerWidth <= 480 ? '0.8rem' : '1rem';
-    sparkle.style.color = '#FFD700';
     sparkle.style.pointerEvents = 'none';
     sparkle.style.zIndex = '1000';
     sparkle.style.transition = 'all 1s ease-out';
@@ -864,10 +934,8 @@ function createSparkles(x, y) {
 }
 
 function handleHeartActivate(evt) {
-  // Prevent e.g. text selection / default behavior
   if (evt.preventDefault) evt.preventDefault();
   const { x, y } = getClientXY(evt);
-
   if (isLetterOpen || isClosing) return;
 
   clickCount++;
@@ -884,75 +952,46 @@ function handleHeartActivate(evt) {
     setTimeout(() => openLetter(), 500);
   }
 }
-
-// prefer pointer events (covers mouse + touch)
 if (heartSeal) {
   heartSeal.addEventListener('pointerup', handleHeartActivate, { passive: false });
-  // prevent context menu on long press specifically on heartSeal
   heartSeal.addEventListener('contextmenu', e => e.preventDefault());
 }
 
-/* -----------------------
-   Open / Close animations (logic) with scroll lock
-   ----------------------- */
 function openLetter() {
   isLetterOpen = true;
   if (instructions) instructions.style.display = 'none';
-
   if (envelope) envelope.classList.add('opened');
-
-  // lock background scroll on mobile when opening
   lockBodyScroll();
 
-  // show letterPaper
   if (letterPaper) {
     letterPaper.style.display = 'block';
-    // wait small delay so CSS transitions can apply
-    setTimeout(() => {
-      letterPaper.classList.add('expanding');
-    }, 80);
-
-    // expand to fullscreen after animation
+    setTimeout(() => { letterPaper.classList.add('expanding'); }, 80);
     setTimeout(() => {
       letterPaper.classList.add('fullscreen');
       if (mainContainer) mainContainer.style.display = 'none';
+      // ensure hidden at the moment it becomes fullscreen
+      hideCloseButtonInstant();
     }, 1100);
-
-    // show close button later
-    setTimeout(() => {
-      if (closeButton) closeButton.classList.add('visible');
-    }, 2200);
   }
 }
 
 function closeLetterSequence() {
   if (isClosing) return;
   isClosing = true;
-
-  if (closeButton) {
-    closeButton.classList.remove('visible');
-    // keep display toggled by visibility script below
-  }
-
+  hideCloseButtonInstant();
   if (letterPaper) letterPaper.classList.remove('fullscreen');
 
   setTimeout(() => {
     if (letterPaper) letterPaper.classList.remove('expanding');
-
     setTimeout(() => {
       if (letterPaper) letterPaper.style.display = 'none';
       if (mainContainer) mainContainer.style.display = 'flex';
-
       if (envelope) envelope.classList.remove('opened');
       if (heartSeal) heartSeal.style.display = 'flex';
-
-      // unlock background scroll
       unlockBodyScroll();
 
-      // show thank you
       setTimeout(() => {
         if (thankYou) thankYou.classList.add('visible');
-
         setTimeout(() => {
           if (thankYou) thankYou.classList.remove('visible');
           setTimeout(() => resetLetter(), 1000);
@@ -962,10 +1001,21 @@ function closeLetterSequence() {
   }, 500);
 }
 
+/* -----------------------
+   closeButton listener: only allow close if visible or at bottom
+   ----------------------- */
 if (closeButton) {
-  // pointerup covers both tap and click
   closeButton.addEventListener('pointerup', function (e) {
-    if (e) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+
+    const isVisible = closeButton.classList.contains('visible');
+    const atBottom = scrollContainer ?
+        ((scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - 8))
+        : true;
+
+    if (!isVisible && !atBottom) return;
+    if (isClosing) return;
+
     closeLetterSequence();
   }, { passive: false });
 }
@@ -982,12 +1032,13 @@ function resetLetter() {
     heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
   }
   if (instructions) instructions.style.display = 'block';
-  // ensure body scroll unlocked just in case
   unlockBodyScroll();
+  hideCloseButtonInstant();
 }
 
 /* -----------------------
-   Particle & breathing (unchanged behavior)
+   Particles, breathing, tap logic...
+   (sin cambios relevantes — se mantienen igual)
    ----------------------- */
 function createHeartParticles() {
   const interval = window.innerWidth <= 768 ? 4000 : 2000;
@@ -1012,9 +1063,7 @@ function createHeartParticles() {
       }, 100);
 
       setTimeout(() => {
-        if (document.body.contains(particle)) {
-          document.body.removeChild(particle);
-        }
+        if (document.body.contains(particle)) document.body.removeChild(particle);
       }, 8000);
     }
   }, interval);
@@ -1024,21 +1073,15 @@ function addBreathingAnimation() {
   setInterval(() => {
     if (!isLetterOpen && !isClosing && envelope) {
       envelope.style.transform = 'scale(1.01)';
-      setTimeout(() => {
-        envelope.style.transform = 'scale(1)';
-      }, 1000);
+      setTimeout(() => { envelope.style.transform = 'scale(1)'; }, 1000);
     }
   }, 4000);
 }
 
-/* -----------------------
-   Double-tap / tap logic (pointer-safe)
-   ----------------------- */
 let tapCount = 0;
 let tapTimer = null;
 if (envelope) {
   envelope.addEventListener('pointerup', function (e) {
-    // ignore clicks on heartSeal (heart handled separately)
     if (e.target === heartSeal) return;
     tapCount++;
     if (tapTimer) clearTimeout(tapTimer);
@@ -1055,7 +1098,6 @@ if (envelope) {
 function createHeartBurst(x, y) {
   const hearts = ['💖', '💕', '💗', '💘', '🩷', '❤️', '💝'];
   const burstCount = window.innerWidth <= 480 ? 8 : 12;
-
   for (let i = 0; i < burstCount; i++) {
     const heart = document.createElement('div');
     heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
@@ -1086,44 +1128,35 @@ function createHeartBurst(x, y) {
    Auto-scroll safe for touch devices
    ----------------------- */
 (function () {
-  const paper = letterPaper; // #letterPaper
+  const paper = letterPaper;
   if (!paper) {
     console.warn('No se encontró #letterPaper — el auto-scroll no se activará.');
     return;
   }
-  const scrollContainer = paper.querySelector('.letter-content') || paper; // prefer contenido
+  const innerScrollContainer = paper.querySelector('.letter-content') || paper;
   const closeBtn = closeButton;
 
   let isAutoScrolling = false;
   let autoScrollTimer = null;
   let autoScrollResumeTimer = null;
-  const AUTO_SCROLL_RESUME_DELAY = 5000; // 5s
-  const SCROLL_SPEED = 25; // steps per second
+  const AUTO_SCROLL_RESUME_DELAY = 5000;
+  const SCROLL_SPEED = 25;
   const SCROLL_STEP = 1;
 
   function startAutoScroll() {
     if (isAutoScrolling || window.innerWidth <= 768) return;
-    if (!scrollContainer) return;
+    if (!innerScrollContainer) return;
 
-    if (autoScrollTimer) {
-      clearInterval(autoScrollTimer);
-      autoScrollTimer = null;
-    }
-    if (autoScrollResumeTimer) {
-      clearTimeout(autoScrollResumeTimer);
-      autoScrollResumeTimer = null;
-    }
+    if (autoScrollTimer) { clearInterval(autoScrollTimer); autoScrollTimer = null; }
+    if (autoScrollResumeTimer) { clearTimeout(autoScrollResumeTimer); autoScrollResumeTimer = null; }
 
     isAutoScrolling = true;
     autoScrollTimer = setInterval(() => {
-      if (scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight - 1) {
-        scrollContainer.scrollTop += SCROLL_STEP;
+      if (innerScrollContainer.scrollTop < innerScrollContainer.scrollHeight - innerScrollContainer.clientHeight - 1) {
+        innerScrollContainer.scrollTop += SCROLL_STEP;
       } else {
-        // reached the bottom
-        if (closeBtn && !closeBtn.classList.contains('visible')) {
-          closeBtn.style.display = '';
-          closeBtn.classList.add('visible');
-        }
+        // reached the bottom -> show close via helper
+        if (closeBtn && !closeBtn.classList.contains('visible')) showCloseButton();
         clearInterval(autoScrollTimer);
         autoScrollTimer = null;
         isAutoScrolling = false;
@@ -1132,10 +1165,7 @@ function createHeartBurst(x, y) {
   }
 
   function stopAutoScroll() {
-    if (autoScrollTimer) {
-      clearInterval(autoScrollTimer);
-      autoScrollTimer = null;
-    }
+    if (autoScrollTimer) { clearInterval(autoScrollTimer); autoScrollTimer = null; }
     isAutoScrolling = false;
   }
 
@@ -1147,86 +1177,59 @@ function createHeartBurst(x, y) {
     }, AUTO_SCROLL_RESUME_DELAY);
   }
 
-  // events that stop scroll
   ['wheel', 'mousedown', 'pointerdown', 'keydown'].forEach(evt => {
-    document.addEventListener(evt, () => {
-      stopAutoScroll();
-      scheduleAutoScrollResume();
-    }, { passive: true });
+    document.addEventListener(evt, () => { stopAutoScroll(); scheduleAutoScrollResume(); }, { passive: true });
   });
 
   let touchStartY = 0;
   let isUserScrolling = false;
 
-  scrollContainer.addEventListener('touchstart', (e) => {
+  innerScrollContainer.addEventListener('touchstart', (e) => {
     touchStartY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
     isUserScrolling = false;
     if (isAutoScrolling) stopAutoScroll();
   }, { passive: true });
 
-  scrollContainer.addEventListener('touchmove', (e) => {
+  innerScrollContainer.addEventListener('touchmove', (e) => {
     const currentY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
     const deltaY = Math.abs(currentY - touchStartY);
-    if (deltaY > 6) {
-      isUserScrolling = true;
-      stopAutoScroll();
-    }
+    if (deltaY > 6) { isUserScrolling = true; stopAutoScroll(); }
   }, { passive: true });
 
-  scrollContainer.addEventListener('touchend', () => {
+  innerScrollContainer.addEventListener('touchend', () => {
     if (isUserScrolling) scheduleAutoScrollResume();
-    else {
-      stopAutoScroll();
-      scheduleAutoScrollResume();
-    }
+    else { stopAutoScroll(); scheduleAutoScrollResume(); }
     setTimeout(() => { isUserScrolling = false; }, 300);
   }, { passive: true });
 
-  // show close button when user scrolls to bottom
   const BOTTOM_THRESHOLD_PX = 8;
   let rafId = null;
   function checkIfScrolledToEnd() {
     if (rafId) cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(() => {
-      const atBottom = (scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - BOTTOM_THRESHOLD_PX);
+      const atBottom = (innerScrollContainer.scrollTop + innerScrollContainer.clientHeight) >= (innerScrollContainer.scrollHeight - BOTTOM_THRESHOLD_PX);
       if (atBottom) {
-        if (closeBtn) {
-          closeBtn.style.display = '';
-          closeBtn.classList.add('visible');
-        }
+        if (closeBtn) showCloseButton();
       } else {
-        if (closeBtn) {
-          closeBtn.classList.remove('visible');
-          closeBtn.style.display = 'none';
-        }
+        if (closeBtn) hideCloseButtonInstant();
       }
     });
   }
 
-  scrollContainer.addEventListener('scroll', () => {
-    checkIfScrolledToEnd();
-  }, { passive: true });
-
+  innerScrollContainer.addEventListener('scroll', () => { checkIfScrolledToEnd(); }, { passive: true });
   window.addEventListener('resize', checkIfScrolledToEnd, { passive: true });
-  window.addEventListener('orientationchange', () => {
-    setTimeout(checkIfScrolledToEnd, 60);
-  }, { passive: true });
+  window.addEventListener('orientationchange', () => { setTimeout(checkIfScrolledToEnd, 60); }, { passive: true });
 
-  // expose API
   window._letterAutoScroll = {
     start: startAutoScroll,
     stop: stopAutoScroll,
     reset: function () {
       stopAutoScroll();
-      if (autoScrollResumeTimer) {
-        clearTimeout(autoScrollResumeTimer);
-        autoScrollResumeTimer = null;
-      }
+      if (autoScrollResumeTimer) { clearTimeout(autoScrollResumeTimer); autoScrollResumeTimer = null; }
     },
     scheduleResume: scheduleAutoScrollResume
   };
 
-  // start auto-scroll if already fullscreen
   if (paper.classList.contains('fullscreen')) startAutoScroll();
 })();
 
@@ -1238,10 +1241,15 @@ if (mutationTarget) {
   const fullscreenObserver = new MutationObserver((mutations) => {
     for (const m of mutations) {
       if (m.attributeName === 'class' && mutationTarget.classList.contains('fullscreen')) {
-        // give CSS time to settle
         setTimeout(() => {
           if (window._letterAutoScroll && typeof window._letterAutoScroll.start === 'function') {
             window._letterAutoScroll.start();
+          }
+          const inner = mutationTarget.querySelector('.letter-content') || mutationTarget;
+          if (inner) {
+            const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 8);
+            if (!atBottom) hideCloseButtonInstant();
+            else showCloseButton();
           }
         }, 700);
         break;
@@ -1252,7 +1260,7 @@ if (mutationTarget) {
 }
 
 /* -----------------------
-   Resize handler: recreate floating elements + ensure sizes
+   Resize handler
    ----------------------- */
 window.addEventListener('resize', function () {
   if (letterPaper && letterPaper.classList.contains('fullscreen')) {
@@ -1260,18 +1268,24 @@ window.addEventListener('resize', function () {
     letterPaper.style.height = '100vh';
   }
   clearTimeout(window.resizeTimer);
-  window.resizeTimer = setTimeout(() => {
-    createFloatingElements();
-  }, 500);
+  window.resizeTimer = setTimeout(() => { createFloatingElements(); }, 500);
 }, { passive: true });
 
 /* -----------------------
    Init on DOMContentLoaded
    ----------------------- */
+(function initialHide() {
+  // hide close button asap — runs even before DOMContentLoaded if script is early
+  hideCloseButtonInstant();
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
   createFloatingElements();
   createHeartParticles();
   addBreathingAnimation();
+
+  // ensure close button hidden initially (double-safety)
+  hideCloseButtonInstant();
 
   setTimeout(() => {
     if (instructions) instructions.style.opacity = '1';
@@ -1290,5 +1304,8 @@ document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
 });
 </script>
+
+
+
 </body>
 </html>
