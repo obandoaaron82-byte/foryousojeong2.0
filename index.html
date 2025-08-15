@@ -6,639 +6,652 @@
     <title>소정에게 보내는 사랑 편지 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Gamja+Flower:wght@400&family=Poor+Story:wght@400&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://i.imgur.com/BebsMfr.png.png">
-    <style>
-/* -------------------------
-   Variables globales (fácil ajuste)
-   ------------------------- */
-:root{
-  --pink-100: #FFE4E8;
-  --pink-200: #FFF0F3;
-  --pink-300: #FFEBF0;
-  --accent-1: #FF1493;
-  --accent-2: #FF69B4;
-  --accent-3: #FFB6C1;
-  --accent-4: #FFD3DC;
-  --envelope-w: clamp(220px, 28vw, 320px);
-  --envelope-h: calc(var(--envelope-w) * 0.64);
-  --transition-fast: 260ms;
-  --transition-medium: 420ms;
-  --shadow-1: 0 6px 20px rgba(255, 180, 190, 0.22);
-}
-
-/* -------------------------
-   Reset / base
-   ------------------------- */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-}
-
-body {
-  font-family: 'Poor Story', cursive;
-  background: linear-gradient(135deg, var(--pink-100) 0%, var(--pink-200) 50%, var(--pink-300) 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* Preferencias de movimiento reducidas */
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
-}
-
-/* -------------------------
-   Floating hearts & stars
-   ------------------------- */
-.floating-elements{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.floating-heart,
-.floating-star {
-  position: absolute;
-  opacity: 0.28;
-  animation: float 6s ease-in-out infinite;
-  will-change: transform, opacity;
-  pointer-events: none;
-  transform-origin: center;
-}
-
-/* permitir personalizar delay por --delay */
-.floating-heart { font-size: 1.2rem; color: var(--accent-2); --delay: 0s; animation-delay: var(--delay); }
-.floating-star  { font-size: 1rem;  color: #FFD700;     --delay: 0s; animation-delay: var(--delay); }
-
-@keyframes float {
-  0%,100% { transform: translateY(0px) rotate(0deg); }
-  25%     { transform: translateY(-20px) rotate(5deg); }
-  50%     { transform: translateY(-10px) rotate(-5deg); }
-  75%     { transform: translateY(-25px) rotate(3deg); }
-}
-
-/* -------------------------
-   Contenedor principal
-   ------------------------- */
-.container{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-  padding:15px;
-  position:relative;
-  z-index:10;
-}
-
-/* -------------------------
-   Envelope (sobre)
-   ------------------------- */
-.envelope{
-  position:relative;
-  width: var(--envelope-w);
-  height: var(--envelope-h);
-  cursor: pointer;
-  transition: transform 300ms ease, filter 300ms ease;
-  transform-style: preserve-3d;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.envelope:hover{
-  transform: translateY(-3px) scale(1.02);
-  filter: drop-shadow(0 8px 15px rgba(255, 180, 190, 0.22));
-}
-
-/* back & front */
-.envelope-back,
-.envelope-front{
-  position:absolute;
-  inset:0;
-  border-radius:8px;
-  border: 2px solid var(--accent-3);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  box-shadow: var(--shadow-1);
-}
-
-/* fondo posterior ligeramente distinto */
-.envelope-back{
-  background: linear-gradient(135deg, #FFF3F5 0%, #FFE6EB 100%);
-  border-color: #FFCAD4;
-  z-index:1;
-}
-
-/* frente con origen en top center para rotar en X */
-.envelope-front{
-  background: linear-gradient(135deg, #FFE6EB 0%, var(--accent-4) 100%);
-  border-color: #FFB8C6;
-  transform-origin: top center;
-  transition: transform 800ms cubic-bezier(0.4,0,0.2,1);
-  z-index:2;
-  will-change: transform;
-}
-
-/* triangular flap invertido y más oscuro */
-.envelope-front::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  will-change: transform, opacity;
-
-
-  width: calc(var(--envelope-w, 280px) * 0.975);
-  height: calc(var(--envelope-h, 180px) * 0.65); /* más alto que 0.5 */
-
-  /* punta hacia abajo */
-  clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-
-  /* color más oscuro que el frente */
-  background: linear-gradient(135deg, #F8B7C9 0%, #E6738E 100%);
-
-  box-shadow: 0 6px 20px rgba(180, 100, 120, 0.18);
-  border-radius: 0 0 6px 6px; /* redondeo en la parte inferior */
-  z-index: 3;
-  transition: transform 600ms ease, opacity 300ms ease;
-}
-
-
-/* estado abierto (clase .opened en .envelope) */
-.envelope.opened .envelope-front{
-  /* rotamos en X para abrir la solapa */
-  transform: rotateX(-105deg);
-  transition: transform 600ms ease-in-out;
-}
-
-/* -------------------------
-   Heart seal (sello)
-   ------------------------- */
-/* usamos transform con translateX + scale para conservar centrado siempre */
-.heart-seal{
-  position:absolute;
-  top: calc(50% - 8px); /* centrado vertical aproximado respecto al sobre */
-  left:50%;
-  transform: translateX(-50%) scale(1);
-  width: 70px;
-  height: 70px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:2.6rem;
-  color: var(--accent-1);
-  z-index:3;
-  cursor:pointer;
-  transition: transform 300ms ease, color 200ms ease, background 200ms ease;
-  user-select:none;
-  background: radial-gradient(circle, rgba(255,20,147,0.1) 0%, transparent 70%);
-  border-radius:50%;
-  border: 2px solid rgba(255,20,147,0.2);
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.28);
-  will-change: transform;
-  touch-action: manipulation;
-}
-
-/* hover / active (combinaciones seguras) */
-.heart-seal:hover,
-.heart-seal:focus-visible{
-  transform: translateX(-50%) scale(1.1);
-  color: var(--accent-2);
-  background: radial-gradient(circle, rgba(255,20,147,0.2) 0%, transparent 70%);
-  outline: none;
-}
-
-.heart-seal:active{
-  transform: translateX(-50%) scale(0.94);
-}
-
-/* animaciones "crack" (se usan añadiendo clases crack-1..3) */
-.heart-seal.crack-1 { animation: crack1 300ms ease both; }
-.heart-seal.crack-2 { animation: crack2 300ms ease both; }
-.heart-seal.crack-3 { animation: crack3 500ms ease forwards; }
-
-@keyframes crack1 {
-  0%   { transform: translateX(-50%) scale(1); }
-  25%  { transform: translateX(-50%) scale(1.3); filter: brightness(1.5); }
-  50%  { transform: translateX(-50%) scale(0.92); filter: brightness(2); }
-  100% { transform: translateX(-50%) scale(1.08); }
-}
-
-@keyframes crack2 {
-  0%   { transform: translateX(-50%) scale(1.1); }
-  25%  { transform: translateX(-50%) scale(1.4); filter: brightness(2); }
-  50%  { transform: translateX(-50%) scale(0.82); filter: brightness(3); }
-  100% { transform: translateX(-50%) scale(1.18); }
-}
-
-@keyframes crack3 {
-  0%   { transform: translateX(-50%) scale(1.2); opacity: 1; }
-  25%  { transform: translateX(-50%) scale(1.6); filter: brightness(4); }
-  50%  { transform: translateX(-50%) scale(0.5); }
-  100% { transform: translateX(-50%) scale(0); opacity: 0; }
-}
-
-/* -------------------------
-   Letter / Paper (modal)
-   ------------------------- */
-.letter-paper{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 260px;
-  height: auto;
-  max-width: 260px;
-  max-height: 170px;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
-  border: 2px solid var(--accent-3);
-  border-radius: 12px;
-  padding: 18px;
-  transform: translate(-50%, -45%) translateY(10px);
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    opacity var(--transition-medium) cubic-bezier(.2,.9,.3,1),
-    transform var(--transition-medium) cubic-bezier(.2,.9,.3,1),
-    max-width var(--transition-medium) cubic-bezier(.2,.9,.3,1),
-    max-height var(--transition-medium) cubic-bezier(.2,.9,.3,1),
-    padding 320ms cubic-bezier(.2,.9,.3,1),
-    box-shadow 320ms ease,
-    border-radius 320ms ease,
-    filter 360ms ease;
-  will-change: transform, opacity, max-width, max-height;
-  z-index: 100;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
-  overflow: hidden;
-  -webkit-overflow-scrolling: touch;
-  filter: blur(6px);
-}
-
-/* abierto / expandiendo */
-.letter-paper.expanding{
-  max-width: min(900px, 92vw);
-  max-height: min(720px, 86vh);
-  width: auto;
-  height: auto;
-  transform: translate(-50%, -50%) translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-  filter: blur(0);
-  border-radius: 12px;
-  padding: 26px;
-  overflow-y: auto;
-  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
-}
-
-/* variante fullscreen (mantiene márgenes) */
-.letter-paper.fullscreen{
-  max-width: calc(100vw - 4vw);
-  max-height: calc(100vh - 4vh);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 28px;
-  border-radius: 10px;
-  box-shadow: 0 20px 80px rgba(0,0,0,0.26);
-  overflow-y: auto;
-  opacity: 1;
-  pointer-events: auto;
-  filter: blur(0);
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-/* -------------------------
-   Contenido interno de la carta
-   ------------------------- */
-.letter-content{
-  opacity: 0;
-  transition: opacity var(--transition-fast) ease;
-  transition-delay: 180ms;
-  font-family: 'Poor Story', cursive;
-  line-height: 1.65;
-  color: #4A4A4A;
-  font-size: clamp(0.95rem, 1.25vw, 1.05rem);
-  width: 100%;
-  position: relative;
-  box-sizing: border-box;
-  overflow: visible;
-  padding-right: 6px;
-  will-change: opacity;
-}
-
-/* mostrar texto cuando el paper está expandido o fullscreen */
-.letter-paper.expanding .letter-content,
-.letter-paper.fullscreen .letter-content{
-  opacity: 1;
-  transition-delay: 180ms;
-}
-
-/* ocultar inmediatamente si NO está expandido (sin delay) */
-.letter-paper:not(.expanding) .letter-content{
-  opacity: 0;
-  transition-delay: 0ms;
-}
-
-/* títulos y párrafos */
-.letter-content h1{
-  font-family: 'Cute Font', cursive;
-  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
-  color: var(--accent-1);
-  text-align:center;
-  margin-bottom:18px;
-  text-shadow: 2px 2px 6px rgba(255,105,180,0.22);
-  line-height:1.15;
-}
-
-.letter-content p{
-  margin-bottom:14px;
-  text-align:justify;
-  hyphens:auto;
-}
-
-.letter-content .signature{
-  text-align:right;
-  font-family: 'Cute Font', cursive;
-  font-size:1.15rem;
-  color: var(--accent-2);
-  margin-top:22px;
-}
-
-.letter-content .highlight{
-  color: var(--accent-1);
-  font-weight: bold;
-  text-decoration: underline;
-  text-decoration-color: var(--accent-3);
-  text-decoration-thickness: 2px;
-}
-
-/* sutil sombra interior cuando está abierto */
-.letter-paper.expanding::after,
-.letter-paper.fullscreen::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-}
-
-/* -------------------------
-   Close button
-   ------------------------- */
-.close-button{
-  position: fixed;
-  bottom: clamp(70px, 10vh, 110px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-family: 'Poor Story', cursive;
-  font-size: 1rem;
-  cursor: pointer;
-  opacity: 0;
-  transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
-  box-shadow: 0 6px 15px rgba(255,105,180,0.4);
-  z-index: 1000;
-}
-
-.close-button.visible{ opacity: 1; }
-
-.close-button:hover,
-.close-button:focus-visible{
-  transform: translateX(-50%) scale(1.05);
-  box-shadow: 0 8px 20px rgba(255,105,180,0.6);
-  outline: none;
-}
-
-/* -------------------------
-   Thank you message
-   ------------------------- */
-.thank-you{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  background: linear-gradient(135deg, #FFE4E8, #FFF0F3);
-  padding: 30px;
-  border-radius: 15px;
-  border: 3px solid var(--accent-2);
-  text-align:center;
-  font-family: 'Cute Font', cursive;
-  font-size:1.5rem;
-  color: var(--accent-1);
-  opacity: 0;
-  transition: transform 800ms cubic-bezier(0.25,0.46,0.45,0.94), opacity 400ms ease;
-  z-index: 1001;
-  box-shadow: 0 12px 30px rgba(255,105,180,0.3);
-}
-
-.thank-you.visible{
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.thank-you .heart{
-  font-size: 2.5rem;
-  color: var(--accent-1);
-  margin: 15px 0;
-  animation: heartbeat 1.5s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-/* -------------------------
-   Instructions & copyright
-   ------------------------- */
-.instructions{
-  position: absolute;
-  bottom: 50px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align:center;
-  font-family: 'Poor Story', cursive;
-  color: var(--accent-2);
-  font-size: 1.1rem;
-  opacity: 0.8;
-  animation: pulse 2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes pulse {
-  0%,100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
-}
-
-.copyright{
-  position: fixed;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  color: var(--accent-2);
-  opacity: 0.6;
-  text-align:center;
-  z-index:40;
-  pointer-events:none;
-  transition: opacity 260ms ease, transform 260ms ease;
-}
-
-/* Si aplicas la clase .body--modal-open en <body> al abrir */
-.body--modal-open .copyright{
-  opacity: 0.28;
-  transform: translateX(-50%) translateY(4px);
-}
-
-/* utilidad */
-.hidden{ display:none !important; }
-
-/* prevenir selección de texto donde no conviene */
-.envelope,
-.heart-seal,
-.instructions{
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-@media (max-width: 600px), (max-height: 600px) {
-  .body--modal-open { 
-    overflow: hidden;
-    touch-action: none; /* Bloquear scroll de fondo */
-  }
-
-  .letter-paper.expanding,
-  .letter-paper.fullscreen {
-    position: fixed;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: 100vw !important;
-    max-height: 100vh !important;
-    transform: translate(0, 0) !important;
-    border-radius: 0 !important;
-    padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
-    box-shadow: none;
-    border: 0;
-    opacity: 1;
-    pointer-events: auto;
-    filter: blur(0);
-    overflow: hidden; /* Controlar el scroll solo en el interior */
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    touch-action: auto; /* Permitir scroll táctil */
-  }
-
-  .letter-paper.expanding .letter-content,
-  .letter-paper.fullscreen .letter-content {
-    height: calc(100vh - 76px);
-    max-height: calc(100vh - 76px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Mejora scroll en iOS */
-    touch-action: pan-y; /* Solo vertical */
-    padding-right: max(12px, env(safe-area-inset-right));
-    padding-left: max(12px, env(safe-area-inset-left));
-  }
-
-    .close-button {
-    display: none;               /* por defecto oculto, se mostrará cuando se añada .visible */
-    position: fixed;
-    right: max(12px, env(safe-area-inset-right));
-    top: max(10px, env(safe-area-inset-top));
-    width: 44px;                 /* tamaño táctil razonable */
-    height: 44px;
-    padding: 8px;
-    font-size: 1rem;
-    border-radius: 999px;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
-    z-index: 2000;
-    transform: none !important;  /* evitar escalados no deseados */
-    transition: transform .12s ease, opacity .18s ease;
-    touch-action: manipulation;
-  }
-
-  /* Cuando tenga la clase visible se muestra (evitamos display:block por herencia) */
-  .close-button.visible {
-    display: inline-flex;
-    opacity: 1;
-  }
-
-  .close-button:hover,
-  .close-button:focus-visible {
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(255,105,180,0.6);
-  }
-
-  .thank-you {
-    width: calc(100% - 32px);
-    max-width: 360px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    padding: 18px;
-    touch-action: manipulation;
-  }
-
-  .thank-you.visible {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  .envelope:hover {
-    transform: translateY(-2px) scale(1.01);
-  }
-
-  .letter-content {
-    font-size: clamp(0.9rem, 3.5vw, 1rem);
-  }
-
-  .letter-content h1 {
-    font-size: clamp(1.4rem, 5vw, 1.8rem);
-  }
-
-  .container {
-    padding: 20px 15px;
-  }
-
-  .instructions {
-    font-size: 1rem;
-    bottom: 40px;
-  }
-}
-
-@media (max-width: 360px) {
-  .letter-content {
-    font-size: 0.85rem;
-  }
-
-  .close-button { width: 40px; height: 40px; font-size: .95rem; padding: 6px; }
-  }
-
-
+       <style>
+        /* -------------------------
+           Variables globales (fácil ajuste)
+           ------------------------- */
+        :root{
+          --pink-100: #FFE4E8;
+          --pink-200: #FFF0F3;
+          --pink-300: #FFEBF0;
+          --accent-1: #FF1493;
+          --accent-2: #FF69B4;
+          --accent-3: #FFB6C1;
+          --accent-4: #FFD3DC;
+          --envelope-w: clamp(220px, 28vw, 320px);
+          --envelope-h: calc(var(--envelope-w) * 0.64);
+          --transition-fast: 260ms;
+          --transition-medium: 420ms;
+          --shadow-1: 0 6px 20px rgba(255, 180, 190, 0.22);
+        }
+
+        /* -------------------------
+           Reset / base
+           ------------------------- */
+        *,
+        *::before,
+        *::after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        html, body {
+          height: 100%;
+        }
+
+        body {
+          font-family: 'Poor Story', cursive;
+          background: linear-gradient(135deg, var(--pink-100) 0%, var(--pink-200) 50%, var(--pink-300) 100%);
+          min-height: 100vh;
+          overflow-x: hidden;
+          position: relative;
+          -webkit-font-smoothing:antialiased;
+          -moz-osx-font-smoothing:grayscale;
+        }
+
+        /* Preferencias de movimiento reducidas */
+        @media (prefers-reduced-motion: reduce) {
+          * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
+
+        /* -------------------------
+           Floating hearts & stars
+           ------------------------- */
+        .floating-elements{
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .floating-heart,
+        .floating-star {
+          position: absolute;
+          opacity: 0.28;
+          animation: float 6s ease-in-out infinite;
+          will-change: transform, opacity;
+          pointer-events: none;
+          transform-origin: center;
+        }
+
+        /* permitir personalizar delay por --delay */
+        .floating-heart { font-size: 1.2rem; color: var(--accent-2); --delay: 0s; animation-delay: var(--delay); }
+        .floating-star  { font-size: 1rem;  color: #FFD700;     --delay: 0s; animation-delay: var(--delay); }
+
+        @keyframes float {
+          0%,100% { transform: translateY(0px) rotate(0deg); }
+          25%     { transform: translateY(-20px) rotate(5deg); }
+          50%     { transform: translateY(-10px) rotate(-5deg); }
+          75%     { transform: translateY(-25px) rotate(3deg); }
+        }
+
+        /* -------------------------
+           Contenedor principal
+           ------------------------- */
+        .container{
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          min-height:100vh;
+          padding:15px;
+          position:relative;
+          z-index:10;
+        }
+
+        /* -------------------------
+           Envelope (sobre)
+           ------------------------- */
+        .envelope{
+          position:relative;
+          width: var(--envelope-w);
+          height: var(--envelope-h);
+          cursor: pointer;
+          transition: transform 300ms ease, filter 300ms ease;
+          transform-style: preserve-3d;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+        }
+
+        .envelope:hover{
+          transform: translateY(-3px) scale(1.02);
+          filter: drop-shadow(0 8px 15px rgba(255, 180, 190, 0.22));
+        }
+
+        /* back & front */
+        .envelope-back,
+        .envelope-front{
+          position:absolute;
+          inset:0;
+          border-radius:8px;
+          border: 2px solid var(--accent-3);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          box-shadow: var(--shadow-1);
+        }
+
+        /* fondo posterior ligeramente distinto */
+        .envelope-back{
+          background: linear-gradient(135deg, #FFF3F5 0%, #FFE6EB 100%);
+          border-color: #FFCAD4;
+          z-index:1;
+        }
+
+        /* frente con origen en top center para rotar en X */
+        .envelope-front{
+          background: linear-gradient(135deg, #FFE6EB 0%, var(--accent-4) 100%);
+          border-color: #FFB8C6;
+          transform-origin: top center;
+          transition: transform 800ms cubic-bezier(0.4,0,0.2,1);
+          z-index:2;
+          will-change: transform;
+        }
+
+        /* triangular flap invertido y más oscuro */
+        .envelope-front::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          pointer-events: none;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          will-change: transform, opacity;
+
+          width: calc(var(--envelope-w, 280px) * 0.975);
+          height: calc(var(--envelope-h, 180px) * 0.65); /* más alto que 0.5 */
+
+          /* punta hacia abajo */
+          clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+
+          /* color más oscuro que el frente */
+          background: linear-gradient(135deg, #F8B7C9 0%, #E6738E 100%);
+
+          box-shadow: 0 6px 20px rgba(180, 100, 120, 0.18);
+          border-radius: 0 0 6px 6px; /* redondeo en la parte inferior */
+          z-index: 3;
+          transition: transform 600ms ease, opacity 300ms ease;
+        }
+
+        /* estado abierto (clase .opened en .envelope) */
+        .envelope.opened .envelope-front{
+          /* rotamos en X para abrir la solapa */
+          transform: rotateX(-105deg);
+          transition: transform 600ms ease-in-out;
+        }
+
+        /* -------------------------
+           Heart seal (sello)
+           ------------------------- */
+        /* usamos transform con translateX + scale para conservar centrado siempre */
+        .heart-seal{
+          position:absolute;
+          top: calc(50% - 8px); /* centrado vertical aproximado respecto al sobre */
+          left:50%;
+          transform: translateX(-50%) scale(1);
+          width: 70px;
+          height: 70px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:2.6rem;
+          color: var(--accent-1);
+          z-index:3;
+          cursor:pointer;
+          transition: transform 300ms ease, color 200ms ease, background 200ms ease;
+          user-select:none;
+          background: radial-gradient(circle, rgba(255,20,147,0.1) 0%, transparent 70%);
+          border-radius:50%;
+          border: 2px solid rgba(255,20,147,0.2);
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.28);
+          will-change: transform;
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        /* hover / active (combinaciones seguras) */
+        .heart-seal:hover,
+        .heart-seal:focus-visible{
+          transform: translateX(-50%) scale(1.1);
+          color: var(--accent-2);
+          background: radial-gradient(circle, rgba(255,20,147,0.2) 0%, transparent 70%);
+          outline: none;
+        }
+
+        .heart-seal:active{
+          transform: translateX(-50%) scale(0.94);
+        }
+
+        /* animaciones "crack" (se usan añadiendo clases crack-1..3) */
+        .heart-seal.crack-1 { animation: crack1 300ms ease both; }
+        .heart-seal.crack-2 { animation: crack2 300ms ease both; }
+        .heart-seal.crack-3 { animation: crack3 500ms ease forwards; }
+
+        @keyframes crack1 {
+          0%   { transform: translateX(-50%) scale(1); }
+          25%  { transform: translateX(-50%) scale(1.3); filter: brightness(1.5); }
+          50%  { transform: translateX(-50%) scale(0.92); filter: brightness(2); }
+          100% { transform: translateX(-50%) scale(1.08); }
+        }
+
+        @keyframes crack2 {
+          0%   { transform: translateX(-50%) scale(1.1); }
+          25%  { transform: translateX(-50%) scale(1.4); filter: brightness(2); }
+          50%  { transform: translateX(-50%) scale(0.82); filter: brightness(3); }
+          100% { transform: translateX(-50%) scale(1.18); }
+        }
+
+        @keyframes crack3 {
+          0%   { transform: translateX(-50%) scale(1.2); opacity: 1; }
+          25%  { transform: translateX(-50%) scale(1.6); filter: brightness(4); }
+          50%  { transform: translateX(-50%) scale(0.5); }
+          100% { transform: translateX(-50%) scale(0); opacity: 0; }
+        }
+
+        /* -------------------------
+           Letter / Paper (modal)
+           ------------------------- */
+        .letter-paper{
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          width: 260px;
+          height: auto;
+          max-width: 260px;
+          max-height: 170px;
+          box-sizing: border-box;
+          background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
+          border: 2px solid var(--accent-3);
+          border-radius: 12px;
+          padding: 18px;
+          transform: translate(-50%, -45%) translateY(10px);
+          opacity: 0;
+          pointer-events: none;
+          transition:
+            opacity var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+            transform var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+            max-width var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+            max-height var(--transition-medium) cubic-bezier(.2,.9,.3,1),
+            padding 320ms cubic-bezier(.2,.9,.3,1),
+            box-shadow 320ms ease,
+            border-radius 320ms ease,
+            filter 360ms ease;
+          will-change: transform, opacity, max-width, max-height;
+          z-index: 100;
+          box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+          overflow: hidden;
+          -webkit-overflow-scrolling: touch;
+          filter: blur(6px);
+          display: none;
+        }
+
+        /* abierto / expandiendo */
+        .letter-paper.expanding{
+          max-width: min(900px, 92vw);
+          max-height: min(720px, 86vh);
+          width: auto;
+          height: auto;
+          transform: translate(-50%, -50%) translateY(0);
+          opacity: 1;
+          pointer-events: auto;
+          filter: blur(0);
+          border-radius: 12px;
+          padding: 26px;
+          overflow-y: auto;
+          box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+        }
+
+        /* variante fullscreen (mantiene márgenes) */
+        .letter-paper.fullscreen{
+          max-width: calc(100vw - 4vw);
+          max-height: calc(100vh - 4vh);
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          padding: 28px;
+          border-radius: 10px;
+          box-shadow: 0 20px 80px rgba(0,0,0,0.26);
+          overflow-y: auto;
+          opacity: 1;
+          pointer-events: auto;
+          filter: blur(0);
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+        }
+
+        /* -------------------------
+           Contenido interno de la carta
+           ------------------------- */
+        .letter-content{
+          opacity: 0;
+          transition: opacity var(--transition-fast) ease;
+          transition-delay: 180ms;
+          font-family: 'Poor Story', cursive;
+          line-height: 1.65;
+          color: #4A4A4A;
+          font-size: clamp(0.95rem, 1.25vw, 1.05rem);
+          width: 100%;
+          position: relative;
+          box-sizing: border-box;
+          overflow: visible;
+          padding-right: 6px;
+          will-change: opacity;
+        }
+
+        /* mostrar texto cuando el paper está expandido o fullscreen */
+        .letter-paper.expanding .letter-content,
+        .letter-paper.fullscreen .letter-content{
+          opacity: 1;
+          transition-delay: 180ms;
+        }
+
+        /* ocultar inmediatamente si NO está expandido (sin delay) */
+        .letter-paper:not(.expanding) .letter-content{
+          opacity: 0;
+          transition-delay: 0ms;
+        }
+
+        /* títulos y párrafos */
+        .letter-content h1{
+          font-family: 'Cute Font', cursive;
+          font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+          color: var(--accent-1);
+          text-align:center;
+          margin-bottom:18px;
+          text-shadow: 2px 2px 6px rgba(255,105,180,0.22);
+          line-height:1.15;
+        }
+
+        .letter-content p{
+          margin-bottom:14px;
+          text-align:justify;
+          hyphens:auto;
+        }
+
+        .letter-content .signature{
+          text-align:right;
+          font-family: 'Cute Font', cursive;
+          font-size:1.15rem;
+          color: var(--accent-2);
+          margin-top:22px;
+        }
+
+        .letter-content .highlight{
+          color: var(--accent-1);
+          font-weight: bold;
+          text-decoration: underline;
+          text-decoration-color: var(--accent-3);
+          text-decoration-thickness: 2px;
+        }
+
+        /* sutil sombra interior cuando está abierto */
+        .letter-paper.expanding::after,
+        .letter-paper.fullscreen::after{
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          pointer-events: none;
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+        }
+
+        /* -------------------------
+           Close button
+           ------------------------- */
+        .close-button{
+          position: fixed;
+          bottom: clamp(70px, 10vh, 110px);
+          left: 50%;
+          transform: translateX(-50%);
+          background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-family: 'Poor Story', cursive;
+          font-size: 1rem;
+          cursor: pointer;
+          opacity: 0;
+          display: none;
+          transition: transform 300ms ease, opacity 300ms ease, box-shadow 300ms ease;
+          box-shadow: 0 6px 15px rgba(255,105,180,0.4);
+          z-index: 1000;
+          pointer-events: none;
+          touch-action: manipulation;
+        }
+
+        .close-button.visible{ 
+          opacity: 1; 
+          display: inline-block;
+          pointer-events: auto;
+        }
+
+        .close-button:hover,
+        .close-button:focus-visible{
+          transform: translateX(-50%) scale(1.05);
+          box-shadow: 0 8px 20px rgba(255,105,180,0.6);
+          outline: none;
+        }
+
+        /* -------------------------
+           Thank you message
+           ------------------------- */
+        .thank-you{
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          background: linear-gradient(135deg, #FFE4E8, #FFF0F3);
+          padding: 30px;
+          border-radius: 15px;
+          border: 3px solid var(--accent-2);
+          text-align:center;
+          font-family: 'Cute Font', cursive;
+          font-size:1.5rem;
+          color: var(--accent-1);
+          opacity: 0;
+          transition: transform 800ms cubic-bezier(0.25,0.46,0.45,0.94), opacity 400ms ease;
+          z-index: 1001;
+          box-shadow: 0 12px 30px rgba(255,105,180,0.3);
+        }
+
+        .thank-you.visible{
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .thank-you .heart{
+          font-size: 2.5rem;
+          color: var(--accent-1);
+          margin: 15px 0;
+          animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+          0%,100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        /* -------------------------
+           Instructions & copyright
+           ------------------------- */
+        .instructions{
+          position: absolute;
+          bottom: 50px;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align:center;
+          font-family: 'Poor Story', cursive;
+          color: var(--accent-2);
+          font-size: 1.1rem;
+          opacity: 0.8;
+          animation: pulse 2s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        @keyframes pulse {
+          0%,100% { opacity: 0.8; }
+          50% { opacity: 0.4; }
+        }
+
+        .copyright{
+          position: fixed;
+          bottom: 8px;
+          left: 50%;
+          transform: translateX(-50%);
+          font-size: 0.7rem;
+          color: var(--accent-2);
+          opacity: 0.6;
+          text-align:center;
+          z-index:40;
+          pointer-events:none;
+          transition: opacity 260ms ease, transform 260ms ease;
+        }
+
+        /* Si aplicas la clase .body--modal-open en <body> al abrir */
+        .body--modal-open .copyright{
+          opacity: 0.28;
+          transform: translateX(-50%) translateY(4px);
+        }
+
+        /* utilidad */
+        .hidden{ display:none !important; }
+
+        /* prevenir selección de texto donde no conviene */
+        .envelope,
+        .heart-seal,
+        .instructions{
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+
+        @media (max-width: 600px), (max-height: 600px) {
+          .body--modal-open { 
+            overflow: hidden;
+            touch-action: none; /* Bloquear scroll de fondo */
+          }
+
+          .letter-paper.expanding,
+          .letter-paper.fullscreen {
+            position: fixed;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            transform: translate(0, 0) !important;
+            border-radius: 0 !important;
+            padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+            box-shadow: none;
+            border: 0;
+            opacity: 1;
+            pointer-events: auto;
+            filter: blur(0);
+            overflow: hidden; /* Controlar el scroll solo en el interior */
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            touch-action: auto; /* Permitir scroll táctil */
+          }
+
+          .letter-paper.expanding .letter-content,
+          .letter-paper.fullscreen .letter-content {
+            height: calc(100vh - 76px);
+            max-height: calc(100vh - 76px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Mejora scroll en iOS */
+            touch-action: pan-y; /* Solo vertical */
+            padding-right: max(12px, env(safe-area-inset-right));
+            padding-left: max(12px, env(safe-area-inset-left));
+          }
+
+          .close-button {
+            display: none;               /* por defecto oculto */
+            position: fixed;
+            right: max(12px, env(safe-area-inset-right));
+            top: max(12px, env(safe-area-inset-top));
+            left: auto !important;
+            bottom: auto !important;
+            width: 44px;                 /* tamaño táctil razonable */
+            height: 44px;
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+            z-index: 2000;
+            transform: none !important;  /* evitar escalados no deseados */
+            transition: transform .12s ease, opacity .18s ease;
+            touch-action: manipulation;
+          }
+
+          /* Cuando tenga la clase visible se muestra (evitamos display:block por herencia) */
+          .close-button.visible {
+            display: flex !important;
+            opacity: 1;
+          }
+
+          .close-button:hover,
+          .close-button:focus-visible {
+            transform: scale(1.05) !important;
+            box-shadow: 0 8px 20px rgba(255,105,180,0.6);
+          }
+
+          .thank-you {
+            width: calc(100% - 32px);
+            max-width: 360px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 18px;
+            touch-action: manipulation;
+          }
+
+          .thank-you.visible {
+            transform: translate(-50%, -50%) scale(1);
+          }
+
+          .envelope:hover {
+            transform: translateY(-2px) scale(1.01);
+          }
+
+          .letter-content {
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+          }
+
+          .letter-content h1 {
+            font-size: clamp(1.4rem, 5vw, 1.8rem);
+          }
+
+          .container {
+            padding: 20px 15px;
+          }
+
+          .instructions {
+            font-size: 1rem;
+            bottom: 40px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .letter-content {
+            font-size: 0.85rem;
+          }
+
+          .close-button { 
+            width: 40px; 
+            height: 40px; 
+            font-size: .95rem; 
+            padding: 6px; 
+          }
+        }
     </style>
 </head>
 <body>
@@ -754,558 +767,470 @@ body {
         © 2025 Aaron E. Obando & 박소정 — Made with 💖 for 소정 (foryousojeong) · v2.1
     </div>
 
-<script>
-/* -----------------------
-   Helpers & selects
-   ----------------------- */
-const envelope = document.getElementById('envelope');
-const heartSeal = document.getElementById('heartSeal');
-const letterPaper = document.getElementById('letterPaper'); // contenedor principal (con .letter-content dentro)
-const closeButton = document.getElementById('closeButton');
-const thankYou = document.getElementById('thankYou');
-const instructions = document.getElementById('instructions');
-const mainContainer = document.getElementById('mainContainer');
-const floatingElements = document.getElementById('floatingElements');
 
-function getClientXY(e) {
-  if (!e) return { x: 0, y: 0 };
-  if (e.clientX !== undefined && e.clientY !== undefined) return { x: e.clientX, y: e.clientY };
-  if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-  if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  return { x: 0, y: 0 };
-}
+    <script>
+        // Helpers & selects
+        const envelope = document.getElementById('envelope');
+        const heartSeal = document.getElementById('heartSeal');
+        const letterPaper = document.getElementById('letterPaper');
+        const closeButton = document.getElementById('closeButton');
+        const thankYou = document.getElementById('thankYou');
+        const instructions = document.getElementById('instructions');
+        const mainContainer = document.getElementById('mainContainer');
+        const floatingElements = document.getElementById('floatingElements');
 
-/* -----------------------
-   preferencia: contenedor de scroll real (dentro del letterPaper)
-   ----------------------- */
-const scrollContainer = letterPaper ? letterPaper.querySelector('.letter-content') : null;
+        // Contenedor de scroll real
+        const scrollContainer = letterPaper ? letterPaper.querySelector('.letter-content') : null;
 
-/* -----------------------
-   Safe helpers to show/hide the close button
-   - hideCloseButtonInstant(): guaranteed to hide immediately (used on init & reset)
-   - showCloseButton(): anim-friendly show (used only when at bottom)
-   ----------------------- */
-function hideCloseButtonInstant() {
-  if (!closeButton) return;
-  closeButton.classList.remove('visible');
-  // inline styles to ensure CSS doesn't flash it visible
-  closeButton.style.display = 'none';
-  closeButton.style.opacity = '0';
-  closeButton.style.pointerEvents = 'none';
-  closeButton.setAttribute('aria-hidden', 'true');
-}
+        // Estado global
+        let clickCount = 0;
+        let isLetterOpen = false;
+        let isClosing = false;
+        let isAutoScrolling = false;
+        let autoScrollTimer = null;
+        let autoScrollResumeTimer = null;
 
-function showCloseButton() {
-  if (!closeButton) return;
-  // make visible in an atomic, animation-friendly way
-  closeButton.style.display = '';
-  // force a frame so CSS transitions can run if present
-  requestAnimationFrame(() => {
-    closeButton.classList.add('visible');
-    closeButton.style.opacity = '1';
-    closeButton.style.pointerEvents = 'auto';
-    closeButton.removeAttribute('aria-hidden');
-    updateCloseButtonForViewport();
-  });
-}
+        // Utilidades
+        function isMobile() {
+            return window.innerWidth <= 600 || window.innerHeight <= 600;
+        }
 
-/* Ajustes visuales y funcionales del botón de cerrar para mobile */
-function updateCloseButtonForViewport() {
-  if (!closeButton) return;
-  const isMobile = window.innerWidth <= 600 || window.innerHeight <= 600;
-  if (isMobile) {
-    closeButton.classList.add('close-mobile');
-    closeButton.style.width = closeButton.style.width || '44px';
-    closeButton.style.height = closeButton.style.height || '44px';
-    closeButton.style.padding = closeButton.style.padding || '8px';
-    closeButton.style.fontSize = closeButton.style.fontSize || '1rem';
-    closeButton.style.right = closeButton.style.right || '12px';
-    closeButton.style.top = closeButton.style.top || '12px';
-    // only alter display for visible state (showCloseButton handles it)
-    if (closeButton.classList.contains('visible')) {
-      closeButton.style.display = closeButton.style.display || 'inline-flex';
-    }
-  } else {
-    closeButton.classList.remove('close-mobile');
-    closeButton.style.width = '';
-    closeButton.style.height = '';
-    closeButton.style.padding = '';
-    closeButton.style.fontSize = '';
-    closeButton.style.right = '';
-    closeButton.style.top = '';
-    // allow stylesheet to control display when not mobile (but keep aria)
-    if (!closeButton.classList.contains('visible')) {
-      closeButton.style.display = 'none';
-    } else {
-      closeButton.style.display = '';
-    }
-  }
-}
-window.addEventListener('resize', updateCloseButtonForViewport, { passive: true });
-window.addEventListener('orientationchange', () => { setTimeout(updateCloseButtonForViewport, 80); }, { passive: true });
+        function getClientXY(e) {
+            if (!e) return { x: 0, y: 0 };
+            if (e.clientX !== undefined && e.clientY !== undefined) return { x: e.clientX, y: e.clientY };
+            if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+            if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            return { x: 0, y: 0 };
+        }
 
-/* -----------------------
-   Body scroll lock (mobile-safe)
-   ----------------------- */
-let _bodyTouchHandler = null;
-function lockBodyScroll() {
-  document.body.classList.add('body--modal-open');
-  document.body.style.overflow = 'hidden';
-  _bodyTouchHandler = function (evt) {
-    const insideContent = evt.target.closest && evt.target.closest('.letter-content');
-    if (!insideContent) evt.preventDefault();
-  };
-  document.addEventListener('touchmove', _bodyTouchHandler, { passive: false });
-}
-function unlockBodyScroll() {
-  document.body.classList.remove('body--modal-open');
-  document.body.style.overflow = '';
-  if (_bodyTouchHandler) {
-    document.removeEventListener('touchmove', _bodyTouchHandler, { passive: false });
-    _bodyTouchHandler = null;
-  }
-}
+        // Body scroll lock
+        let _bodyTouchHandler = null;
+        function lockBodyScroll() {
+            document.body.classList.add('body--modal-open');
+            document.body.style.overflow = 'hidden';
+            _bodyTouchHandler = function (evt) {
+                const insideContent = evt.target.closest && evt.target.closest('.letter-content');
+                if (!insideContent) evt.preventDefault();
+            };
+            document.addEventListener('touchmove', _bodyTouchHandler, { passive: false });
+        }
 
-/* -----------------------
-   Floating elements
-   ----------------------- */
-function createFloatingElements() {
-  const hearts = ['💖', '💕', '💗', '💘', '🩷'];
-  const stars = ['⭐', '✨', '🌟', '💫'];
+        function unlockBodyScroll() {
+            document.body.classList.remove('body--modal-open');
+            document.body.style.overflow = '';
+            if (_bodyTouchHandler) {
+                document.removeEventListener('touchmove', _bodyTouchHandler, { passive: false });
+                _bodyTouchHandler = null;
+            }
+        }
 
-  const isMobile = window.innerWidth <= 768;
-  const elementCount = isMobile ? 8 : 15;
-  const starCount = isMobile ? 4 : 8;
+        // Close Button Management
+        function hideCloseButtonInstant() {
+            if (!closeButton) return;
+            closeButton.classList.remove('visible');
+            closeButton.style.display = 'none';
+            closeButton.style.opacity = '0';
+            closeButton.style.pointerEvents = 'none';
+        }
 
-  if (!floatingElements) return;
-  floatingElements.innerHTML = '';
+        function showCloseButton() {
+            if (!closeButton) return;
+            closeButton.style.display = isMobile() ? 'flex' : 'inline-block';
+            requestAnimationFrame(() => {
+                closeButton.classList.add('visible');
+                closeButton.style.opacity = '1';
+                closeButton.style.pointerEvents = 'auto';
+            });
+        }
 
-  for (let i = 0; i < elementCount; i++) {
-    const heart = document.createElement('div');
-    heart.className = 'floating-heart';
-    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-    heart.style.left = Math.random() * 100 + '%';
-    heart.style.top = Math.random() * 100 + '%';
-    heart.style.setProperty('--delay', (Math.random() * 6) + 's');
-    floatingElements.appendChild(heart);
+        // Floating elements
+        function createFloatingElements() {
+            const hearts = ['💖', '💕', '💗', '💘', '🩷'];
+            const stars = ['⭐', '✨', '🌟', '💫'];
+            const mobile = isMobile();
+            const elementCount = mobile ? 8 : 15;
+            const starCount = mobile ? 4 : 8;
 
-    if (i < starCount) {
-      const star = document.createElement('div');
-      star.className = 'floating-star';
-      star.textContent = stars[Math.floor(Math.random() * stars.length)];
-      star.style.left = Math.random() * 100 + '%';
-      star.style.top = Math.random() * 100 + '%';
-      star.style.setProperty('--delay', (Math.random() * 6 + 2) + 's');
-      floatingElements.appendChild(star);
-    }
-  }
-}
+            if (!floatingElements) return;
+            floatingElements.innerHTML = '';
 
-/* -----------------------
-   Heart logic & open/close
-   ----------------------- */
-let clickCount = 0;
-let isLetterOpen = false;
-let isClosing = false;
+            for (let i = 0; i < elementCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.setProperty('--delay', (Math.random() * 6) + 's');
+                floatingElements.appendChild(heart);
 
-function createSparkles(x, y) {
-  const sparkleCount = window.innerWidth <= 480 ? 4 : 6;
-  for (let i = 0; i < sparkleCount; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.textContent = '✨';
-    sparkle.style.position = 'fixed';
-    sparkle.style.left = (x - 10 + Math.random() * 20) + 'px';
-    sparkle.style.top = (y - 10 + Math.random() * 20) + 'px';
-    sparkle.style.fontSize = window.innerWidth <= 480 ? '0.8rem' : '1rem';
-    sparkle.style.pointerEvents = 'none';
-    sparkle.style.zIndex = '1000';
-    sparkle.style.transition = 'all 1s ease-out';
-    document.body.appendChild(sparkle);
+                if (i < starCount) {
+                    const star = document.createElement('div');
+                    star.className = 'floating-star';
+                    star.textContent = stars[Math.floor(Math.random() * stars.length)];
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.setProperty('--delay', (Math.random() * 6 + 2) + 's');
+                    floatingElements.appendChild(star);
+                }
+            }
+        }
 
-    setTimeout(() => {
-      sparkle.style.transform = 'translateY(-50px) scale(0)';
-      sparkle.style.opacity = '0';
-    }, 50);
+        // Sparkles effect
+        function createSparkles(x, y) {
+            const sparkleCount = isMobile() ? 4 : 6;
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.textContent = '✨';
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = (x - 10 + Math.random() * 20) + 'px';
+                sparkle.style.top = (y - 10 + Math.random() * 20) + 'px';
+                sparkle.style.fontSize = isMobile() ? '0.8rem' : '1rem';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.zIndex = '1000';
+                sparkle.style.transition = 'all 1s ease-out';
+                document.body.appendChild(sparkle);
 
-    setTimeout(() => {
-      if (document.body.contains(sparkle)) document.body.removeChild(sparkle);
-    }, 1000);
-  }
-}
+                setTimeout(() => {
+                    sparkle.style.transform = 'translateY(-50px) scale(0)';
+                    sparkle.style.opacity = '0';
+                }, 50);
 
-function handleHeartActivate(evt) {
-  if (evt.preventDefault) evt.preventDefault();
-  const { x, y } = getClientXY(evt);
-  if (isLetterOpen || isClosing) return;
+                setTimeout(() => {
+                    if (document.body.contains(sparkle)) document.body.removeChild(sparkle);
+                }, 1000);
+            }
+        }
 
-  clickCount++;
-  heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
+        // Heart activation handler
+        function handleHeartActivate(evt) {
+            if (evt.preventDefault) evt.preventDefault();
+            const { x, y } = getClientXY(evt);
+            if (isLetterOpen || isClosing) return;
 
-  if (clickCount === 1) {
-    heartSeal.classList.add('crack-1');
-    createSparkles(x, y);
-  } else if (clickCount === 2) {
-    heartSeal.classList.add('crack-2');
-    createSparkles(x, y);
-  } else if (clickCount >= 3) {
-    heartSeal.classList.add('crack-3');
-    setTimeout(() => openLetter(), 500);
-  }
-}
-if (heartSeal) {
-  heartSeal.addEventListener('pointerup', handleHeartActivate, { passive: false });
-  heartSeal.addEventListener('contextmenu', e => e.preventDefault());
-}
+            clickCount++;
+            heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
 
-function openLetter() {
-  isLetterOpen = true;
-  if (instructions) instructions.style.display = 'none';
-  if (envelope) envelope.classList.add('opened');
-  lockBodyScroll();
+            if (clickCount === 1) {
+                heartSeal.classList.add('crack-1');
+                createSparkles(x, y);
+            } else if (clickCount === 2) {
+                heartSeal.classList.add('crack-2');
+                createSparkles(x, y);
+            } else if (clickCount >= 3) {
+                heartSeal.classList.add('crack-3');
+                setTimeout(() => openLetter(), 500);
+            }
+        }
 
-  if (letterPaper) {
-    letterPaper.style.display = 'block';
-    setTimeout(() => { letterPaper.classList.add('expanding'); }, 80);
-    setTimeout(() => {
-      letterPaper.classList.add('fullscreen');
-      if (mainContainer) mainContainer.style.display = 'none';
-      // ensure hidden at the moment it becomes fullscreen
-      hideCloseButtonInstant();
-    }, 1100);
-  }
-}
+        // Heart Seal Event Listeners
+        if (heartSeal) {
+            // Use both pointerdown and touchstart for better mobile support
+            heartSeal.addEventListener('pointerdown', handleHeartActivate, { passive: false });
+            heartSeal.addEventListener('touchstart', handleHeartActivate, { passive: false });
+            heartSeal.addEventListener('contextmenu', e => e.preventDefault());
+        }
 
-function closeLetterSequence() {
-  if (isClosing) return;
-  isClosing = true;
-  hideCloseButtonInstant();
-  if (letterPaper) letterPaper.classList.remove('fullscreen');
+        // Auto-scroll functionality
+        function startAutoScroll() {
+            if (isAutoScrolling || isMobile() || !scrollContainer) return;
+            
+            stopAutoScroll();
+            isAutoScrolling = true;
+            
+            autoScrollTimer = setInterval(() => {
+                const isAtBottom = (scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - 8);
+                
+                if (!isAtBottom) {
+                    scrollContainer.scrollTop += 1;
+                } else {
+                    showCloseButton();
+                    stopAutoScroll();
+                }
+            }, 40); // 25fps
+        }
 
-  setTimeout(() => {
-    if (letterPaper) letterPaper.classList.remove('expanding');
-    setTimeout(() => {
-      if (letterPaper) letterPaper.style.display = 'none';
-      if (mainContainer) mainContainer.style.display = 'flex';
-      if (envelope) envelope.classList.remove('opened');
-      if (heartSeal) heartSeal.style.display = 'flex';
-      unlockBodyScroll();
+        function stopAutoScroll() {
+            if (autoScrollTimer) {
+                clearInterval(autoScrollTimer);
+                autoScrollTimer = null;
+            }
+            isAutoScrolling = false;
+        }
 
-      setTimeout(() => {
-        if (thankYou) thankYou.classList.add('visible');
-        setTimeout(() => {
-          if (thankYou) thankYou.classList.remove('visible');
-          setTimeout(() => resetLetter(), 1000);
-        }, 4000);
-      }, 400);
-    }, 700);
-  }, 500);
-}
+        function scheduleAutoScrollResume() {
+            if (autoScrollResumeTimer) clearTimeout(autoScrollResumeTimer);
+            autoScrollResumeTimer = setTimeout(() => {
+                if (letterPaper.classList.contains('fullscreen') && !isClosing && !isMobile()) {
+                    startAutoScroll();
+                }
+            }, 5000);
+        }
 
-/* -----------------------
-   closeButton listener: only allow close if visible or at bottom
-   ----------------------- */
-if (closeButton) {
-  closeButton.addEventListener('pointerup', function (e) {
-    if (e && e.preventDefault) e.preventDefault();
+        // Scroll detection
+        function checkScrollPosition() {
+            if (!scrollContainer) return;
+            
+            const isAtBottom = (scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - 8);
+            
+            if (isAtBottom) {
+                showCloseButton();
+            } else if (!isMobile()) {
+                hideCloseButtonInstant();
+            }
+        }
 
-    const isVisible = closeButton.classList.contains('visible');
-    const atBottom = scrollContainer ?
-        ((scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - 8))
-        : true;
+        // Open letter sequence
+        function openLetter() {
+            isLetterOpen = true;
+            if (instructions) instructions.style.display = 'none';
+            if (envelope) envelope.classList.add('opened');
+            lockBodyScroll();
 
-    if (!isVisible && !atBottom) return;
-    if (isClosing) return;
+            if (letterPaper) {
+                letterPaper.style.display = 'block';
+                setTimeout(() => {
+                    letterPaper.classList.add('expanding');
+                }, 80);
+                
+                setTimeout(() => {
+                    letterPaper.classList.add('fullscreen');
+                    if (mainContainer) mainContainer.style.display = 'none';
+                    hideCloseButtonInstant();
+                    
+                    // Start auto-scroll for desktop after transition
+                    setTimeout(() => {
+                        if (!isMobile()) {
+                            checkScrollPosition();
+                            if (scrollContainer.scrollHeight > scrollContainer.clientHeight) {
+                                startAutoScroll();
+                            } else {
+                                showCloseButton();
+                            }
+                        } else {
+                            // On mobile, show close button immediately
+                            showCloseButton();
+                        }
+                    }, 200);
+                }, 1100);
+            }
+        }
 
-    closeLetterSequence();
-  }, { passive: false });
-}
+        // Close letter sequence
+        function closeLetterSequence() {
+            if (isClosing) return;
+            isClosing = true;
+            hideCloseButtonInstant();
+            stopAutoScroll();
+            
+            if (letterPaper) letterPaper.classList.remove('fullscreen');
 
-/* -----------------------
-   Reset
-   ----------------------- */
-function resetLetter() {
-  clickCount = 0;
-  isLetterOpen = false;
-  isClosing = false;
-  if (heartSeal) {
-    heartSeal.style.display = 'flex';
-    heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
-  }
-  if (instructions) instructions.style.display = 'block';
-  unlockBodyScroll();
-  hideCloseButtonInstant();
-}
+            setTimeout(() => {
+                if (letterPaper) letterPaper.classList.remove('expanding');
+                setTimeout(() => {
+                    if (letterPaper) letterPaper.style.display = 'none';
+                    if (mainContainer) mainContainer.style.display = 'flex';
+                    if (envelope) envelope.classList.remove('opened');
+                    if (heartSeal) heartSeal.style.display = 'flex';
+                    unlockBodyScroll();
 
-/* -----------------------
-   Particles, breathing, tap logic...
-   (sin cambios relevantes — se mantienen igual)
-   ----------------------- */
-function createHeartParticles() {
-  const interval = window.innerWidth <= 768 ? 4000 : 2000;
-  setInterval(() => {
-    if (!isLetterOpen) {
-      const particle = document.createElement('div');
-      particle.textContent = Math.random() > 0.5 ? '💕' : '✨';
-      particle.style.position = 'fixed';
-      particle.style.left = Math.random() * window.innerWidth + 'px';
-      particle.style.top = '-20px';
-      particle.style.fontSize = window.innerWidth <= 480 ? '0.7rem' : '0.8rem';
-      particle.style.pointerEvents = 'none';
-      particle.style.zIndex = '1';
-      particle.style.opacity = '0.6';
-      particle.style.transition = 'all 8s linear';
-      document.body.appendChild(particle);
+                    setTimeout(() => {
+                        if (thankYou) thankYou.classList.add('visible');
+                        setTimeout(() => {
+                            if (thankYou) thankYou.classList.remove('visible');
+                            setTimeout(() => resetLetter(), 1000);
+                        }, 4000);
+                    }, 400);
+                }, 700);
+            }, 500);
+        }
 
-      setTimeout(() => {
-        particle.style.top = window.innerHeight + 20 + 'px';
-        particle.style.transform = 'rotate(360deg)';
-        particle.style.opacity = '0';
-      }, 100);
+        // Reset letter state
+        function resetLetter() {
+            clickCount = 0;
+            isLetterOpen = false;
+            isClosing = false;
+            if (heartSeal) {
+                heartSeal.style.display = 'flex';
+                heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
+            }
+            if (instructions) instructions.style.display = 'block';
+            unlockBodyScroll();
+            hideCloseButtonInstant();
+            stopAutoScroll();
+        }
 
-      setTimeout(() => {
-        if (document.body.contains(particle)) document.body.removeChild(particle);
-      }, 8000);
-    }
-  }, interval);
-}
+        // Close button event listener
+        if (closeButton) {
+            closeButton.addEventListener('pointerdown', function(e) {
+                if (e.preventDefault) e.preventDefault();
+                if (isClosing) return;
+                closeLetterSequence();
+            }, { passive: false });
+            
+            closeButton.addEventListener('touchstart', function(e) {
+                if (e.preventDefault) e.preventDefault();
+                if (isClosing) return;
+                closeLetterSequence();
+            }, { passive: false });
+        }
 
-function addBreathingAnimation() {
-  setInterval(() => {
-    if (!isLetterOpen && !isClosing && envelope) {
-      envelope.style.transform = 'scale(1.01)';
-      setTimeout(() => { envelope.style.transform = 'scale(1)'; }, 1000);
-    }
-  }, 4000);
-}
+        // Scroll event listeners
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', checkScrollPosition, { passive: true });
+            
+            // User interaction detection
+            ['wheel', 'mousedown', 'pointerdown', 'keydown'].forEach(eventType => {
+                scrollContainer.addEventListener(eventType, () => {
+                    stopAutoScroll();
+                    scheduleAutoScrollResume();
+                }, { passive: true });
+            });
 
-let tapCount = 0;
-let tapTimer = null;
-if (envelope) {
-  envelope.addEventListener('pointerup', function (e) {
-    if (e.target === heartSeal) return;
-    tapCount++;
-    if (tapTimer) clearTimeout(tapTimer);
-    tapTimer = setTimeout(() => {
-      if (tapCount === 2 && !isLetterOpen) {
-        const { x, y } = getClientXY(e);
-        createHeartBurst(x, y);
-      }
-      tapCount = 0;
-    }, 300);
-  }, { passive: true });
-}
+            // Touch handling
+            let touchStartY = 0;
+            let isUserScrolling = false;
 
-function createHeartBurst(x, y) {
-  const hearts = ['💖', '💕', '💗', '💘', '🩷', '❤️', '💝'];
-  const burstCount = window.innerWidth <= 480 ? 8 : 12;
-  for (let i = 0; i < burstCount; i++) {
-    const heart = document.createElement('div');
-    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-    heart.style.position = 'fixed';
-    heart.style.left = x + 'px';
-    heart.style.top = y + 'px';
-    heart.style.fontSize = window.innerWidth <= 480 ? '1.2rem' : '1.5rem';
-    heart.style.pointerEvents = 'none';
-    heart.style.zIndex = '1000';
-    heart.style.transition = 'all 2s ease-out';
-    document.body.appendChild(heart);
+            scrollContainer.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
+                isUserScrolling = false;
+                stopAutoScroll();
+            }, { passive: true });
 
-    const angle = (i * (360 / burstCount)) * Math.PI / 180;
-    const distance = window.innerWidth <= 480 ? 80 : 120;
+            scrollContainer.addEventListener('touchmove', (e) => {
+                const currentY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
+                const deltaY = Math.abs(currentY - touchStartY);
+                if (deltaY > 6) {
+                    isUserScrolling = true;
+                    stopAutoScroll();
+                }
+            }, { passive: true });
 
-    setTimeout(() => {
-      heart.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0) rotate(720deg)`;
-      heart.style.opacity = '0';
-    }, 100);
+            scrollContainer.addEventListener('touchend', () => {
+                if (isUserScrolling) scheduleAutoScrollResume();
+                setTimeout(() => { isUserScrolling = false; }, 300);
+            }, { passive: true });
+        }
 
-    setTimeout(() => {
-      if (document.body.contains(heart)) document.body.removeChild(heart);
-    }, 2000);
-  }
-}
+        // Heart particles
+        function createHeartParticles() {
+            const interval = isMobile() ? 4000 : 2000;
+            setInterval(() => {
+                if (!isLetterOpen) {
+                    const particle = document.createElement('div');
+                    particle.textContent = Math.random() > 0.5 ? '💕' : '✨';
+                    particle.style.position = 'fixed';
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = '-20px';
+                    particle.style.fontSize = isMobile() ? '0.7rem' : '0.8rem';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '1';
+                    particle.style.opacity = '0.6';
+                    particle.style.transition = 'all 8s linear';
+                    document.body.appendChild(particle);
 
-/* -----------------------
-   Auto-scroll safe for touch devices
-   ----------------------- */
-(function () {
-  const paper = letterPaper;
-  if (!paper) {
-    console.warn('No se encontró #letterPaper — el auto-scroll no se activará.');
-    return;
-  }
-  const innerScrollContainer = paper.querySelector('.letter-content') || paper;
-  const closeBtn = closeButton;
+                    setTimeout(() => {
+                        particle.style.top = window.innerHeight + 20 + 'px';
+                        particle.style.transform = 'rotate(360deg)';
+                        particle.style.opacity = '0';
+                    }, 100);
 
-  let isAutoScrolling = false;
-  let autoScrollTimer = null;
-  let autoScrollResumeTimer = null;
-  const AUTO_SCROLL_RESUME_DELAY = 5000;
-  const SCROLL_SPEED = 25;
-  const SCROLL_STEP = 1;
+                    setTimeout(() => {
+                        if (document.body.contains(particle)) document.body.removeChild(particle);
+                    }, 8000);
+                }
+            }, interval);
+        }
 
-  function startAutoScroll() {
-    if (isAutoScrolling || window.innerWidth <= 768) return;
-    if (!innerScrollContainer) return;
+        // Breathing animation
+        function addBreathingAnimation() {
+            setInterval(() => {
+                if (!isLetterOpen && !isClosing && envelope) {
+                    envelope.style.transform = 'scale(1.01)';
+                    setTimeout(() => { envelope.style.transform = 'scale(1)'; }, 1000);
+                }
+            }, 4000);
+        }
 
-    if (autoScrollTimer) { clearInterval(autoScrollTimer); autoScrollTimer = null; }
-    if (autoScrollResumeTimer) { clearTimeout(autoScrollResumeTimer); autoScrollResumeTimer = null; }
+        // Double tap for heart burst
+        let tapCount = 0;
+        let tapTimer = null;
+        if (envelope) {
+            envelope.addEventListener('pointerdown', function(e) {
+                if (e.target === heartSeal) return;
+                tapCount++;
+                if (tapTimer) clearTimeout(tapTimer);
+                tapTimer = setTimeout(() => {
+                    if (tapCount === 2 && !isLetterOpen) {
+                        const { x, y } = getClientXY(e);
+                        createHeartBurst(x, y);
+                    }
+                    tapCount = 0;
+                }, 300);
+            }, { passive: true });
+        }
 
-    isAutoScrolling = true;
-    autoScrollTimer = setInterval(() => {
-      if (innerScrollContainer.scrollTop < innerScrollContainer.scrollHeight - innerScrollContainer.clientHeight - 1) {
-        innerScrollContainer.scrollTop += SCROLL_STEP;
-      } else {
-        // reached the bottom -> show close via helper
-        if (closeBtn && !closeBtn.classList.contains('visible')) showCloseButton();
-        clearInterval(autoScrollTimer);
-        autoScrollTimer = null;
-        isAutoScrolling = false;
-      }
-    }, 1000 / SCROLL_SPEED);
-  }
+        function createHeartBurst(x, y) {
+            const hearts = ['💖', '💕', '💗', '💘', '🩷', '❤️', '💝'];
+            const burstCount = isMobile() ? 8 : 12;
+            for (let i = 0; i < burstCount; i++) {
+                const heart = document.createElement('div');
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.position = 'fixed';
+                heart.style.left = x + 'px';
+                heart.style.top = y + 'px';
+                heart.style.fontSize = isMobile() ? '1.2rem' : '1.5rem';
+                heart.style.pointerEvents = 'none';
+                heart.style.zIndex = '1000';
+                heart.style.transition = 'all 2s ease-out';
+                document.body.appendChild(heart);
 
-  function stopAutoScroll() {
-    if (autoScrollTimer) { clearInterval(autoScrollTimer); autoScrollTimer = null; }
-    isAutoScrolling = false;
-  }
+                const angle = (i * (360 / burstCount)) * Math.PI / 180;
+                const distance = isMobile() ? 80 : 120;
 
-  function scheduleAutoScrollResume() {
-    if (autoScrollResumeTimer) clearTimeout(autoScrollResumeTimer);
-    autoScrollResumeTimer = setTimeout(() => {
-      autoScrollResumeTimer = null;
-      if (paper.classList.contains('fullscreen') && !isClosing) startAutoScroll();
-    }, AUTO_SCROLL_RESUME_DELAY);
-  }
+                setTimeout(() => {
+                    heart.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0) rotate(720deg)`;
+                    heart.style.opacity = '0';
+                }, 100);
 
-  ['wheel', 'mousedown', 'pointerdown', 'keydown'].forEach(evt => {
-    document.addEventListener(evt, () => { stopAutoScroll(); scheduleAutoScrollResume(); }, { passive: true });
-  });
+                setTimeout(() => {
+                    if (document.body.contains(heart)) document.body.removeChild(heart);
+                }, 2000);
+            }
+        }
 
-  let touchStartY = 0;
-  let isUserScrolling = false;
+        // Resize handler
+        window.addEventListener('resize', function() {
+            if (letterPaper && letterPaper.classList.contains('fullscreen')) {
+                setTimeout(checkScrollPosition, 100);
+            }
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(() => { createFloatingElements(); }, 500);
+        }, { passive: true });
 
-  innerScrollContainer.addEventListener('touchstart', (e) => {
-    touchStartY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
-    isUserScrolling = false;
-    if (isAutoScrolling) stopAutoScroll();
-  }, { passive: true });
+        // Prevent context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
 
-  innerScrollContainer.addEventListener('touchmove', (e) => {
-    const currentY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
-    const deltaY = Math.abs(currentY - touchStartY);
-    if (deltaY > 6) { isUserScrolling = true; stopAutoScroll(); }
-  }, { passive: true });
+        // Initialize
+        hideCloseButtonInstant();
 
-  innerScrollContainer.addEventListener('touchend', () => {
-    if (isUserScrolling) scheduleAutoScrollResume();
-    else { stopAutoScroll(); scheduleAutoScrollResume(); }
-    setTimeout(() => { isUserScrolling = false; }, 300);
-  }, { passive: true });
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingElements();
+            createHeartParticles();
+            addBreathingAnimation();
+            hideCloseButtonInstant();
 
-  const BOTTOM_THRESHOLD_PX = 8;
-  let rafId = null;
-  function checkIfScrolledToEnd() {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => {
-      const atBottom = (innerScrollContainer.scrollTop + innerScrollContainer.clientHeight) >= (innerScrollContainer.scrollHeight - BOTTOM_THRESHOLD_PX);
-      if (atBottom) {
-        if (closeBtn) showCloseButton();
-      } else {
-        if (closeBtn) hideCloseButtonInstant();
-      }
-    });
-  }
+            setTimeout(() => {
+                if (instructions) instructions.style.opacity = '1';
+            }, 1000);
 
-  innerScrollContainer.addEventListener('scroll', () => { checkIfScrolledToEnd(); }, { passive: true });
-  window.addEventListener('resize', checkIfScrolledToEnd, { passive: true });
-  window.addEventListener('orientationchange', () => { setTimeout(checkIfScrolledToEnd, 60); }, { passive: true });
-
-  window._letterAutoScroll = {
-    start: startAutoScroll,
-    stop: stopAutoScroll,
-    reset: function () {
-      stopAutoScroll();
-      if (autoScrollResumeTimer) { clearTimeout(autoScrollResumeTimer); autoScrollResumeTimer = null; }
-    },
-    scheduleResume: scheduleAutoScrollResume
-  };
-
-  if (paper.classList.contains('fullscreen')) startAutoScroll();
-})();
-
-/* -----------------------
-   Observer para detectar fullscreen y arrancar auto-scroll
-   ----------------------- */
-const mutationTarget = letterPaper;
-if (mutationTarget) {
-  const fullscreenObserver = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.attributeName === 'class' && mutationTarget.classList.contains('fullscreen')) {
-        setTimeout(() => {
-          if (window._letterAutoScroll && typeof window._letterAutoScroll.start === 'function') {
-            window._letterAutoScroll.start();
-          }
-          const inner = mutationTarget.querySelector('.letter-content') || mutationTarget;
-          if (inner) {
-            const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 8);
-            if (!atBottom) hideCloseButtonInstant();
-            else showCloseButton();
-          }
-        }, 700);
-        break;
-      }
-    }
-  });
-  fullscreenObserver.observe(mutationTarget, { attributes: true, attributeFilter: ['class'] });
-}
-
-/* -----------------------
-   Resize handler
-   ----------------------- */
-window.addEventListener('resize', function () {
-  if (letterPaper && letterPaper.classList.contains('fullscreen')) {
-    letterPaper.style.width = '100vw';
-    letterPaper.style.height = '100vh';
-  }
-  clearTimeout(window.resizeTimer);
-  window.resizeTimer = setTimeout(() => { createFloatingElements(); }, 500);
-}, { passive: true });
-
-/* -----------------------
-   Init on DOMContentLoaded
-   ----------------------- */
-(function initialHide() {
-  // hide close button asap — runs even before DOMContentLoaded if script is early
-  hideCloseButtonInstant();
-})();
-
-document.addEventListener('DOMContentLoaded', function () {
-  createFloatingElements();
-  createHeartParticles();
-  addBreathingAnimation();
-
-  // ensure close button hidden initially (double-safety)
-  hideCloseButtonInstant();
-
-  setTimeout(() => {
-    if (instructions) instructions.style.opacity = '1';
-  }, 1000);
-
-  setTimeout(() => {
-    const paragraphs = document.querySelectorAll('.letter-content p');
-    paragraphs.forEach((p, index) => p.style.setProperty('--index', index));
-  }, 100);
-});
-
-/* -----------------------
-   Prevent context menu on long press globally
-   ----------------------- */
-document.addEventListener('contextmenu', function (e) {
-  e.preventDefault();
-});
-</script>
-
-
+            setTimeout(() => {
+                const paragraphs = document.querySelectorAll('.letter-content p');
+                paragraphs.forEach((p, index) => p.style.setProperty('--index', index));
+            }, 100);
+        });
+    </script>
 
 </body>
 </html>
