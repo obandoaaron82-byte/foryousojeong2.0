@@ -742,216 +742,369 @@ body {
     <div class="copyright">
         © 2025 Aaron E. Obando & 박소정 — Made with 💖 for 소정 (foryousojeong) · v2.1
     </div>
-    
+
     <script>
-        // Game state
-        let clickCount = 0;
-        let isLetterOpen = false;
-        let isClosing = false;
-        
-        // Elements
-        const envelope = document.getElementById('envelope');
-        const heartSeal = document.getElementById('heartSeal');
-        const letterPaper = document.getElementById('letterPaper');
-        const closeButton = document.getElementById('closeButton');
-        const thankYou = document.getElementById('thankYou');
-        const instructions = document.getElementById('instructions');
-        const mainContainer = document.getElementById('mainContainer');
-        const floatingElements = document.getElementById('floatingElements');
-        
-        // Create floating decorations
-        function createFloatingElements() {
-            const hearts = ['💖', '💕', '💗', '💘', '🩷'];
-            const stars = ['⭐', '✨', '🌟', '💫'];
-            
-            const isMobile = window.innerWidth <= 768;
-            const elementCount = isMobile ? 8 : 15;
-            const starCount = isMobile ? 4 : 8;
-            
-            for (let i = 0; i < elementCount; i++) {
-                // Hearts
-                const heart = document.createElement('div');
-                heart.className = 'floating-heart';
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.top = Math.random() * 100 + '%';
-                heart.style.setProperty('--delay', (Math.random() * 6) + 's');
-                floatingElements.appendChild(heart);
-                
-                // Stars
-                if (i < starCount) {
-                    const star = document.createElement('div');
-                    star.className = 'floating-star';
-                    star.textContent = stars[Math.floor(Math.random() * stars.length)];
-                    star.style.left = Math.random() * 100 + '%';
-                    star.style.top = Math.random() * 100 + '%';
-                    star.style.setProperty('--delay', (Math.random() * 6 + 2) + 's');
-                    floatingElements.appendChild(star);
-                }
-            }
-        }
-        
-        // Heart seal click handler with improved mobile support
-        heartSeal.addEventListener('click', handleHeartClick);
-        heartSeal.addEventListener('touchend', handleHeartClick);
-        
-        function handleHeartClick(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isLetterOpen || isClosing) return;
-            
-            clickCount++;
-            
-            // Add crack animation based on click count
-            heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
-            
-            if (clickCount === 1) {
-                heartSeal.classList.add('crack-1');
-                createSparkles(e.clientX || e.changedTouches[0].clientX, e.clientY || e.changedTouches[0].clientY);
-            } else if (clickCount === 2) {
-                heartSeal.classList.add('crack-2');
-                createSparkles(e.clientX || e.changedTouches[0].clientX, e.clientY || e.changedTouches[0].clientY);
-            } else if (clickCount >= 3) {
-                heartSeal.classList.add('crack-3');
-                setTimeout(() => {
-                    openLetter();
-                }, 500);
-            }
-        }
-        
-        // Create sparkle effect with mobile optimization
-        function createSparkles(x, y) {
-            const sparkleCount = window.innerWidth <= 480 ? 4 : 6;
-            for (let i = 0; i < sparkleCount; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.textContent = '✨';
-                sparkle.style.position = 'fixed';
-                sparkle.style.left = (x - 10 + Math.random() * 20) + 'px';
-                sparkle.style.top = (y - 10 + Math.random() * 20) + 'px';
-                sparkle.style.fontSize = window.innerWidth <= 480 ? '0.8rem' : '1rem';
-                sparkle.style.color = '#FFD700';
-                sparkle.style.pointerEvents = 'none';
-                sparkle.style.zIndex = '1000';
-                sparkle.style.transition = 'all 1s ease-out';
-                document.body.appendChild(sparkle);
-                
-                setTimeout(() => {
-                    sparkle.style.transform = 'translateY(-50px) scale(0)';
-                    sparkle.style.opacity = '0';
-                }, 50);
-                
-                setTimeout(() => {
-                    if (document.body.contains(sparkle)) {
-                        document.body.removeChild(sparkle);
-                    }
-                }, 1000);
-            }
-        }
-        
-        // Open letter animation
-        function openLetter() {
-            isLetterOpen = true;
-            instructions.style.display = 'none';
-            
-            // Open envelope
-            envelope.classList.add('opened');
-            
-            // Show and animate letter paper
-            setTimeout(() => {
-                letterPaper.style.display = 'block';
-                setTimeout(() => {
-                    letterPaper.classList.add('expanding');
-                }, 100);
-                
-                // Expand to fullscreen
-                setTimeout(() => {
-                    letterPaper.classList.add('fullscreen');
-                    mainContainer.style.display = 'none';
-                }, 1200);
-                
-                // Show close button after content is visible
-                setTimeout(() => {
-                    closeButton.classList.add('visible');
-                }, 2500);
-            }, 800);
-        }
-        
-        // Close letter animation with improved text handling
-        closeButton.addEventListener('click', function() {
-            if (isClosing) return;
-            isClosing = true;
-            
-            closeButton.classList.remove('visible');
-            
-            // Reverse the animation
-            letterPaper.classList.remove('fullscreen');
-            
-            setTimeout(() => {
-                letterPaper.classList.remove('expanding');
-                
-                setTimeout(() => {
-                    letterPaper.style.display = 'none';
-                    mainContainer.style.display = 'flex';
-                    
-                    // Close envelope
-                    envelope.classList.remove('opened');
-                    heartSeal.style.display = 'none';
-                    
-                    // Show thank you message
-                    setTimeout(() => {
-                        thankYou.classList.add('visible');
-                        
-                        // Auto-hide thank you after 4 seconds
-                        setTimeout(() => {
-                            thankYou.classList.remove('visible');
-                            // Reset everything for potential replay
-                            setTimeout(() => {
-                                resetLetter();
-                            }, 1000);
-                        }, 4000);
-                    }, 500);
-                }, 800);
-            }, 600);
-        });
-        
-        // Reset function for replay
-        function resetLetter() {
-            clickCount = 0;
-            isLetterOpen = false;
-            isClosing = false;
-            heartSeal.style.display = 'flex';
-            heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
-            instructions.style.display = 'block';
-        }
-        
+/* -----------------------
+   Helpers & selects
+   ----------------------- */
+const envelope = document.getElementById('envelope');
+const heartSeal = document.getElementById('heartSeal');
+const letterPaper = document.getElementById('letterPaper'); // contenedor principal (con .letter-content dentro)
+const closeButton = document.getElementById('closeButton');
+const thankYou = document.getElementById('thankYou');
+const instructions = document.getElementById('instructions');
+const mainContainer = document.getElementById('mainContainer');
+const floatingElements = document.getElementById('floatingElements');
 
-// Auto-scroll safe for touch devices — permite el scroll nativo y evita bloqueos
+function getClientXY(e) {
+  // works for pointer events, mouse events, and touch events
+  if (!e) return { x: 0, y: 0 };
+  if (e.clientX !== undefined && e.clientY !== undefined) return { x: e.clientX, y: e.clientY };
+  if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+  if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: 0, y: 0 };
+}
+
+/* -----------------------
+   Body scroll lock (mobile-safe)
+   ----------------------- */
+let _bodyTouchHandler = null;
+function lockBodyScroll() {
+  // hide scrollbars & prevent scroll outside content
+  document.body.classList.add('body--modal-open');
+  document.body.style.overflow = 'hidden';
+  // we add a touchmove listener that prevents scroll except inside .letter-content
+  _bodyTouchHandler = function (evt) {
+    const insideContent = evt.target.closest && evt.target.closest('.letter-content');
+    if (!insideContent) {
+      // prevent background touch scrolling
+      evt.preventDefault();
+    }
+    // else allow native scroll inside .letter-content
+  };
+  // passive: false so we can preventDefault
+  document.addEventListener('touchmove', _bodyTouchHandler, { passive: false });
+}
+
+function unlockBodyScroll() {
+  document.body.classList.remove('body--modal-open');
+  document.body.style.overflow = '';
+  if (_bodyTouchHandler) {
+    document.removeEventListener('touchmove', _bodyTouchHandler, { passive: false });
+    _bodyTouchHandler = null;
+  }
+}
+
+/* -----------------------
+   Floating elements (unchanged lógicamente)
+   ----------------------- */
+function createFloatingElements() {
+  const hearts = ['💖', '💕', '💗', '💘', '🩷'];
+  const stars = ['⭐', '✨', '🌟', '💫'];
+
+  const isMobile = window.innerWidth <= 768;
+  const elementCount = isMobile ? 8 : 15;
+  const starCount = isMobile ? 4 : 8;
+
+  if (!floatingElements) return;
+  floatingElements.innerHTML = '';
+
+  for (let i = 0; i < elementCount; i++) {
+    const heart = document.createElement('div');
+    heart.className = 'floating-heart';
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.top = Math.random() * 100 + '%';
+    heart.style.setProperty('--delay', (Math.random() * 6) + 's');
+    floatingElements.appendChild(heart);
+
+    if (i < starCount) {
+      const star = document.createElement('div');
+      star.className = 'floating-star';
+      star.textContent = stars[Math.floor(Math.random() * stars.length)];
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.setProperty('--delay', (Math.random() * 6 + 2) + 's');
+      floatingElements.appendChild(star);
+    }
+  }
+}
+
+/* -----------------------
+   Heart click logic (pointer-friendly)
+   ----------------------- */
+let clickCount = 0;
+let isLetterOpen = false;
+let isClosing = false;
+
+function createSparkles(x, y) {
+  const sparkleCount = window.innerWidth <= 480 ? 4 : 6;
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.textContent = '✨';
+    sparkle.style.position = 'fixed';
+    sparkle.style.left = (x - 10 + Math.random() * 20) + 'px';
+    sparkle.style.top = (y - 10 + Math.random() * 20) + 'px';
+    sparkle.style.fontSize = window.innerWidth <= 480 ? '0.8rem' : '1rem';
+    sparkle.style.color = '#FFD700';
+    sparkle.style.pointerEvents = 'none';
+    sparkle.style.zIndex = '1000';
+    sparkle.style.transition = 'all 1s ease-out';
+    document.body.appendChild(sparkle);
+
+    setTimeout(() => {
+      sparkle.style.transform = 'translateY(-50px) scale(0)';
+      sparkle.style.opacity = '0';
+    }, 50);
+
+    setTimeout(() => {
+      if (document.body.contains(sparkle)) document.body.removeChild(sparkle);
+    }, 1000);
+  }
+}
+
+function handleHeartActivate(evt) {
+  // Prevent e.g. text selection / default behavior
+  if (evt.preventDefault) evt.preventDefault();
+  const { x, y } = getClientXY(evt);
+
+  if (isLetterOpen || isClosing) return;
+
+  clickCount++;
+  heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
+
+  if (clickCount === 1) {
+    heartSeal.classList.add('crack-1');
+    createSparkles(x, y);
+  } else if (clickCount === 2) {
+    heartSeal.classList.add('crack-2');
+    createSparkles(x, y);
+  } else if (clickCount >= 3) {
+    heartSeal.classList.add('crack-3');
+    setTimeout(() => openLetter(), 500);
+  }
+}
+
+// prefer pointer events (covers mouse + touch)
+if (heartSeal) {
+  heartSeal.addEventListener('pointerup', handleHeartActivate, { passive: false });
+  // prevent context menu on long press specifically on heartSeal
+  heartSeal.addEventListener('contextmenu', e => e.preventDefault());
+}
+
+/* -----------------------
+   Open / Close animations (logic) with scroll lock
+   ----------------------- */
+function openLetter() {
+  isLetterOpen = true;
+  if (instructions) instructions.style.display = 'none';
+
+  if (envelope) envelope.classList.add('opened');
+
+  // lock background scroll on mobile when opening
+  lockBodyScroll();
+
+  // show letterPaper
+  if (letterPaper) {
+    letterPaper.style.display = 'block';
+    // wait small delay so CSS transitions can apply
+    setTimeout(() => {
+      letterPaper.classList.add('expanding');
+    }, 80);
+
+    // expand to fullscreen after animation
+    setTimeout(() => {
+      letterPaper.classList.add('fullscreen');
+      if (mainContainer) mainContainer.style.display = 'none';
+    }, 1100);
+
+    // show close button later
+    setTimeout(() => {
+      if (closeButton) closeButton.classList.add('visible');
+    }, 2200);
+  }
+}
+
+function closeLetterSequence() {
+  if (isClosing) return;
+  isClosing = true;
+
+  if (closeButton) {
+    closeButton.classList.remove('visible');
+    // keep display toggled by visibility script below
+  }
+
+  if (letterPaper) letterPaper.classList.remove('fullscreen');
+
+  setTimeout(() => {
+    if (letterPaper) letterPaper.classList.remove('expanding');
+
+    setTimeout(() => {
+      if (letterPaper) letterPaper.style.display = 'none';
+      if (mainContainer) mainContainer.style.display = 'flex';
+
+      if (envelope) envelope.classList.remove('opened');
+      if (heartSeal) heartSeal.style.display = 'flex';
+
+      // unlock background scroll
+      unlockBodyScroll();
+
+      // show thank you
+      setTimeout(() => {
+        if (thankYou) thankYou.classList.add('visible');
+
+        setTimeout(() => {
+          if (thankYou) thankYou.classList.remove('visible');
+          setTimeout(() => resetLetter(), 1000);
+        }, 4000);
+      }, 400);
+    }, 700);
+  }, 500);
+}
+
+if (closeButton) {
+  // pointerup covers both tap and click
+  closeButton.addEventListener('pointerup', function (e) {
+    if (e) e.preventDefault();
+    closeLetterSequence();
+  }, { passive: false });
+}
+
+/* -----------------------
+   Reset
+   ----------------------- */
+function resetLetter() {
+  clickCount = 0;
+  isLetterOpen = false;
+  isClosing = false;
+  if (heartSeal) {
+    heartSeal.style.display = 'flex';
+    heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
+  }
+  if (instructions) instructions.style.display = 'block';
+  // ensure body scroll unlocked just in case
+  unlockBodyScroll();
+}
+
+/* -----------------------
+   Particle & breathing (unchanged behavior)
+   ----------------------- */
+function createHeartParticles() {
+  const interval = window.innerWidth <= 768 ? 4000 : 2000;
+  setInterval(() => {
+    if (!isLetterOpen) {
+      const particle = document.createElement('div');
+      particle.textContent = Math.random() > 0.5 ? '💕' : '✨';
+      particle.style.position = 'fixed';
+      particle.style.left = Math.random() * window.innerWidth + 'px';
+      particle.style.top = '-20px';
+      particle.style.fontSize = window.innerWidth <= 480 ? '0.7rem' : '0.8rem';
+      particle.style.pointerEvents = 'none';
+      particle.style.zIndex = '1';
+      particle.style.opacity = '0.6';
+      particle.style.transition = 'all 8s linear';
+      document.body.appendChild(particle);
+
+      setTimeout(() => {
+        particle.style.top = window.innerHeight + 20 + 'px';
+        particle.style.transform = 'rotate(360deg)';
+        particle.style.opacity = '0';
+      }, 100);
+
+      setTimeout(() => {
+        if (document.body.contains(particle)) {
+          document.body.removeChild(particle);
+        }
+      }, 8000);
+    }
+  }, interval);
+}
+
+function addBreathingAnimation() {
+  setInterval(() => {
+    if (!isLetterOpen && !isClosing && envelope) {
+      envelope.style.transform = 'scale(1.01)';
+      setTimeout(() => {
+        envelope.style.transform = 'scale(1)';
+      }, 1000);
+    }
+  }, 4000);
+}
+
+/* -----------------------
+   Double-tap / tap logic (pointer-safe)
+   ----------------------- */
+let tapCount = 0;
+let tapTimer = null;
+if (envelope) {
+  envelope.addEventListener('pointerup', function (e) {
+    // ignore clicks on heartSeal (heart handled separately)
+    if (e.target === heartSeal) return;
+    tapCount++;
+    if (tapTimer) clearTimeout(tapTimer);
+    tapTimer = setTimeout(() => {
+      if (tapCount === 2 && !isLetterOpen) {
+        const { x, y } = getClientXY(e);
+        createHeartBurst(x, y);
+      }
+      tapCount = 0;
+    }, 300);
+  }, { passive: true });
+}
+
+function createHeartBurst(x, y) {
+  const hearts = ['💖', '💕', '💗', '💘', '🩷', '❤️', '💝'];
+  const burstCount = window.innerWidth <= 480 ? 8 : 12;
+
+  for (let i = 0; i < burstCount; i++) {
+    const heart = document.createElement('div');
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.position = 'fixed';
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+    heart.style.fontSize = window.innerWidth <= 480 ? '1.2rem' : '1.5rem';
+    heart.style.pointerEvents = 'none';
+    heart.style.zIndex = '1000';
+    heart.style.transition = 'all 2s ease-out';
+    document.body.appendChild(heart);
+
+    const angle = (i * (360 / burstCount)) * Math.PI / 180;
+    const distance = window.innerWidth <= 480 ? 80 : 120;
+
+    setTimeout(() => {
+      heart.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0) rotate(720deg)`;
+      heart.style.opacity = '0';
+    }, 100);
+
+    setTimeout(() => {
+      if (document.body.contains(heart)) document.body.removeChild(heart);
+    }, 2000);
+  }
+}
+
+/* -----------------------
+   Auto-scroll safe for touch devices
+   ----------------------- */
 (function () {
-  const letterPaper = document.querySelector('.letter-paper');
-  const closeButton = document.querySelector('.close-button');
-  const heartSeal = document.querySelector('.heart-seal');
-  const instructions = document.querySelector('.instructions');
-
-  if (!letterPaper) {
-    console.warn('No se encontró .letter-paper — el script de auto-scroll no se activará.');
+  const paper = letterPaper; // #letterPaper
+  if (!paper) {
+    console.warn('No se encontró #letterPaper — el auto-scroll no se activará.');
     return;
   }
+  const scrollContainer = paper.querySelector('.letter-content') || paper; // prefer contenido
+  const closeBtn = closeButton;
 
   let isAutoScrolling = false;
   let autoScrollTimer = null;
   let autoScrollResumeTimer = null;
-  const AUTO_SCROLL_RESUME_DELAY = 5000; // 5 segundos
-
-  let touchStartY = 0;
-  let isUserScrolling = false;
-  let isLetterOpen = false; // si lo usas en tu app, sincroniza con tu lógica real
-  let isClosing = false;
+  const AUTO_SCROLL_RESUME_DELAY = 5000; // 5s
+  const SCROLL_SPEED = 25; // steps per second
+  const SCROLL_STEP = 1;
 
   function startAutoScroll() {
-    // no auto-scroll en pantallas pequeñas por diseño
     if (isAutoScrolling || window.innerWidth <= 768) return;
+    if (!scrollContainer) return;
 
-    // limpia timers previos
     if (autoScrollTimer) {
       clearInterval(autoScrollTimer);
       autoScrollTimer = null;
@@ -962,22 +1115,20 @@ body {
     }
 
     isAutoScrolling = true;
-    const scrollContainer = letterPaper;
-    const scrollSpeed = 25; // pasos por segundo
-    const scrollStep = 1;
-
     autoScrollTimer = setInterval(() => {
-      if (scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight) {
-        scrollContainer.scrollTop += scrollStep;
+      if (scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight - 1) {
+        scrollContainer.scrollTop += SCROLL_STEP;
       } else {
-        if (closeButton && !closeButton.classList.contains('visible')) {
-          closeButton.classList.add('visible');
+        // reached the bottom
+        if (closeBtn && !closeBtn.classList.contains('visible')) {
+          closeBtn.style.display = '';
+          closeBtn.classList.add('visible');
         }
         clearInterval(autoScrollTimer);
         autoScrollTimer = null;
         isAutoScrolling = false;
       }
-    }, 1000 / scrollSpeed);
+    }, 1000 / SCROLL_SPEED);
   }
 
   function stopAutoScroll() {
@@ -989,337 +1140,155 @@ body {
   }
 
   function scheduleAutoScrollResume() {
-    if (autoScrollResumeTimer) {
-      clearTimeout(autoScrollResumeTimer);
-    }
+    if (autoScrollResumeTimer) clearTimeout(autoScrollResumeTimer);
     autoScrollResumeTimer = setTimeout(() => {
       autoScrollResumeTimer = null;
-      // reanuda solo si la carta sigue en fullscreen (o acorde a tu lógica)
-      if (letterPaper.classList.contains('fullscreen') && !isClosing) {
-        startAutoScroll();
-      }
+      if (paper.classList.contains('fullscreen') && !isClosing) startAutoScroll();
     }, AUTO_SCROLL_RESUME_DELAY);
   }
 
-  // Eventos que detienen el auto-scroll — todos pasivos para no bloquear el scroll nativo
-  const simpleEvents = ['wheel', 'mousedown', 'pointerdown', 'keydown'];
-  simpleEvents.forEach(evt => {
+  // events that stop scroll
+  ['wheel', 'mousedown', 'pointerdown', 'keydown'].forEach(evt => {
     document.addEventListener(evt, () => {
       stopAutoScroll();
       scheduleAutoScrollResume();
     }, { passive: true });
   });
 
-  // Touch handlers: NO impedirán el scroll por defecto.
-  letterPaper.addEventListener('touchstart', (e) => {
+  let touchStartY = 0;
+  let isUserScrolling = false;
+
+  scrollContainer.addEventListener('touchstart', (e) => {
     touchStartY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
     isUserScrolling = false;
-    // si está en auto-scroll, detenerlo inmediatamente
-    if (isAutoScrolling) {
-      stopAutoScroll();
-    }
-    // no programar reanudo aquí — al final del touch (touchend) lo programamos
+    if (isAutoScrolling) stopAutoScroll();
   }, { passive: true });
 
-  letterPaper.addEventListener('touchmove', (e) => {
-    // NO hacemos e.preventDefault() — permitimos el scrolling nativo
-    // Detectamos si el usuario está moviendo verticalmente para distinguir taps de scrolls
+  scrollContainer.addEventListener('touchmove', (e) => {
     const currentY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
     const deltaY = Math.abs(currentY - touchStartY);
-    if (deltaY > 6) { // umbral razonable para considerar "scroll"
+    if (deltaY > 6) {
       isUserScrolling = true;
       stopAutoScroll();
     }
-    // programamos reanudar cuando el usuario deje de tocar (touchend) — no aquí
   }, { passive: true });
 
-  letterPaper.addEventListener('touchend', () => {
-    // Si hubo un scroll por touch, programamos reanudar auto-scroll tras el delay
-    if (isUserScrolling) {
-      scheduleAutoScrollResume();
-    } else {
-      // fue un tap (no desplazamiento): también detener y programar reanudar
+  scrollContainer.addEventListener('touchend', () => {
+    if (isUserScrolling) scheduleAutoScrollResume();
+    else {
       stopAutoScroll();
       scheduleAutoScrollResume();
     }
-    // reset state ligero
     setTimeout(() => { isUserScrolling = false; }, 300);
   }, { passive: true });
 
-  // Si cierras la carta / reseteas, limpiar timers
-  function resetLetter() {
-    if (autoScrollTimer) {
-      clearInterval(autoScrollTimer);
-      autoScrollTimer = null;
-    }
-    if (autoScrollResumeTimer) {
-      clearTimeout(autoScrollResumeTimer);
-      autoScrollResumeTimer = null;
-    }
-    // restablece estados (ajusta según tu lógica)
-    isAutoScrolling = false;
-    isUserScrolling = false;
-    isLetterOpen = false;
-    isClosing = false;
-    // restaurar UI si existen los elementos
-    if (heartSeal) {
-      heartSeal.style.display = 'flex';
-      heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
-    }
-    if (instructions) instructions.style.display = 'block';
-  }
-
-  // Exponer funciones si quieres controlarlas desde fuera (opcional)
-  window._letterAutoScroll = {
-    start: startAutoScroll,
-    stop: stopAutoScroll,
-    reset: resetLetter,
-    scheduleResume: scheduleAutoScrollResume
-  };
-
-  // -- Inicio opcional: si la carta ya está en fullscreen al cargar, arrancar auto-scroll
-  if (letterPaper.classList.contains('fullscreen')) {
-    startAutoScroll();
-  }
-})();
-
-        
-        // Create particle effects with mobile optimization
-        function createHeartParticles() {
-            const interval = window.innerWidth <= 768 ? 4000 : 2000; // Less frequent on mobile
-            setInterval(() => {
-                if (!isLetterOpen) {
-                    const particle = document.createElement('div');
-                    particle.textContent = Math.random() > 0.5 ? '💕' : '✨';
-                    particle.style.position = 'fixed';
-                    particle.style.left = Math.random() * window.innerWidth + 'px';
-                    particle.style.top = '-20px';
-                    particle.style.fontSize = window.innerWidth <= 480 ? '0.7rem' : '0.8rem';
-                    particle.style.pointerEvents = 'none';
-                    particle.style.zIndex = '1';
-                    particle.style.opacity = '0.6';
-                    particle.style.transition = 'all 8s linear';
-                    document.body.appendChild(particle);
-                    
-                    setTimeout(() => {
-                        particle.style.top = window.innerHeight + 20 + 'px';
-                        particle.style.transform = 'rotate(360deg)';
-                        particle.style.opacity = '0';
-                    }, 100);
-                    
-                    setTimeout(() => {
-                        if (document.body.contains(particle)) {
-                            document.body.removeChild(particle);
-                        }
-                    }, 8000);
-                }
-            }, interval);
-        }
-        
-        // Breathing animation with mobile optimization
-        function addBreathingAnimation() {
-            setInterval(() => {
-                if (!isLetterOpen && !isClosing) {
-                    envelope.style.transform = 'scale(1.01)';
-                    setTimeout(() => {
-                        envelope.style.transform = 'scale(1)';
-                    }, 1000);
-                }
-            }, 4000); // Slower on mobile to save battery
-        }
-        
-        // Easter egg: Double-tap envelope for special effect
-        let tapCount = 0;
-        let tapTimer;
-        
-        envelope.addEventListener('click', function(e) {
-            if (e.target === heartSeal) return;
-            
-            tapCount++;
-            clearTimeout(tapTimer);
-            
-            tapTimer = setTimeout(() => {
-                if (tapCount === 2 && !isLetterOpen) {
-                    createHeartBurst(e.clientX || e.changedTouches[0].clientX, e.clientY || e.changedTouches[0].clientY);
-                }
-                tapCount = 0;
-            }, 300);
-        });
-        
-        function createHeartBurst(x, y) {
-            const hearts = ['💖', '💕', '💗', '💘', '🩷', '❤️', '💝'];
-            const burstCount = window.innerWidth <= 480 ? 8 : 12;
-            
-            for (let i = 0; i < burstCount; i++) {
-                const heart = document.createElement('div');
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                heart.style.position = 'fixed';
-                heart.style.left = x + 'px';
-                heart.style.top = y + 'px';
-                heart.style.fontSize = window.innerWidth <= 480 ? '1.2rem' : '1.5rem';
-                heart.style.pointerEvents = 'none';
-                heart.style.zIndex = '1000';
-                heart.style.transition = 'all 2s ease-out';
-                document.body.appendChild(heart);
-                
-                const angle = (i * (360 / burstCount)) * Math.PI / 180;
-                const distance = window.innerWidth <= 480 ? 80 : 120;
-                
-                setTimeout(() => {
-                    heart.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0) rotate(720deg)`;
-                    heart.style.opacity = '0';
-                }, 100);
-                
-                setTimeout(() => {
-                    if (document.body.contains(heart)) {
-                        document.body.removeChild(heart);
-                    }
-                }, 2000);
-            }
-        }
-        
-        // Observer for fullscreen animation
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.target === letterPaper && letterPaper.classList.contains('fullscreen')) {
-                    setTimeout(() => {
-                        startAutoScroll();
-                    }, 1500);
-                }
-            });
-        });
-        
-        observer.observe(letterPaper, { attributes: true, attributeFilter: ['class'] });
-        
-        // Window resize handler
-        window.addEventListener('resize', function() {
-            if (letterPaper.classList.contains('fullscreen')) {
-                letterPaper.style.width = '100vw';
-                letterPaper.style.height = '100vh';
-            }
-            
-            // Recreate floating elements on significant resize
-            clearTimeout(window.resizeTimer);
-            window.resizeTimer = setTimeout(() => {
-                floatingElements.innerHTML = '';
-                createFloatingElements();
-            }, 500);
-        });
-        
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', function() {
-            createFloatingElements();
-            createHeartParticles();
-            addBreathingAnimation();
-            
-            // Add delay before showing instruction
-            setTimeout(() => {
-                instructions.style.opacity = '1';
-            }, 1000);
-            
-            // Add staggered animation to paragraphs
-            setTimeout(() => {
-                const paragraphs = document.querySelectorAll('.letter-content p');
-                paragraphs.forEach((p, index) => {
-                    p.style.setProperty('--index', index);
-                });
-            }, 100);
-        });
-        
-        // Prevent context menu on long press (mobile)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        
-        // Handle orientation change
-        window.addEventListener('orientationchange', function() {
-            setTimeout(() => {
-                if (letterPaper.classList.contains('fullscreen')) {
-                    letterPaper.style.width = '100vw';
-                    letterPaper.style.height = '100vh';
-                }
-            }, 100);
-        });
-        
-        (function () {
-  const letterPaper = document.querySelector('.letter-paper');
-  const closeButton = document.querySelector('.close-button');
-
-  if (!letterPaper || !closeButton) return;
-
-  // Ocultar de inmediato, antes de medir nada
-  closeButton.style.display = 'none';
-
+  // show close button when user scrolls to bottom
   const BOTTOM_THRESHOLD_PX = 8;
   let rafId = null;
-  let hasUserScrolled = false;
-
   function checkIfScrolledToEnd() {
-    if (!hasUserScrolled) return;
-
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
+    if (rafId) cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(() => {
-      const atBottom = (letterPaper.scrollTop + letterPaper.clientHeight) >= (letterPaper.scrollHeight - BOTTOM_THRESHOLD_PX);
-
+      const atBottom = (scrollContainer.scrollTop + scrollContainer.clientHeight) >= (scrollContainer.scrollHeight - BOTTOM_THRESHOLD_PX);
       if (atBottom) {
-        closeButton.style.display = ''; // vuelve al valor por defecto
-        closeButton.classList.add('visible');
+        if (closeBtn) {
+          closeBtn.style.display = '';
+          closeBtn.classList.add('visible');
+        }
       } else {
-        closeButton.classList.remove('visible');
-        closeButton.style.display = 'none';
+        if (closeBtn) {
+          closeBtn.classList.remove('visible');
+          closeBtn.style.display = 'none';
+        }
       }
     });
   }
 
-  letterPaper.addEventListener('scroll', () => {
-    hasUserScrolled = true;
+  scrollContainer.addEventListener('scroll', () => {
     checkIfScrolledToEnd();
   }, { passive: true });
 
   window.addEventListener('resize', checkIfScrolledToEnd, { passive: true });
-  window.addEventListener('orientationchange', checkIfScrolledToEnd, { passive: true });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(checkIfScrolledToEnd, 60);
+  }, { passive: true });
 
-  const mo = new MutationObserver(() => {
-    if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 60);
-  });
-  mo.observe(letterPaper, { childList: true, subtree: true, characterData: true });
+  // expose API
+  window._letterAutoScroll = {
+    start: startAutoScroll,
+    stop: stopAutoScroll,
+    reset: function () {
+      stopAutoScroll();
+      if (autoScrollResumeTimer) {
+        clearTimeout(autoScrollResumeTimer);
+        autoScrollResumeTimer = null;
+      }
+    },
+    scheduleResume: scheduleAutoScrollResume
+  };
 
-  const imgs = letterPaper.querySelectorAll('img');
-  imgs.forEach(img => {
-    if (!img.complete) {
-      img.addEventListener('load', () => {
-        if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 40);
-      }, { passive: true });
-      img.addEventListener('error', () => {
-        if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 40);
-      }, { passive: true });
-    }
-  });
+  // start auto-scroll if already fullscreen
+  if (paper.classList.contains('fullscreen')) startAutoScroll();
+})();
 
-  const classObserver = new MutationObserver(mutations => {
-    if (!hasUserScrolled) return;
+/* -----------------------
+   Observer para detectar fullscreen y arrancar auto-scroll
+   ----------------------- */
+const mutationTarget = letterPaper;
+if (mutationTarget) {
+  const fullscreenObserver = new MutationObserver((mutations) => {
     for (const m of mutations) {
-      if (m.attributeName === 'class') {
-        setTimeout(checkIfScrolledToEnd, 40);
+      if (m.attributeName === 'class' && mutationTarget.classList.contains('fullscreen')) {
+        // give CSS time to settle
+        setTimeout(() => {
+          if (window._letterAutoScroll && typeof window._letterAutoScroll.start === 'function') {
+            window._letterAutoScroll.start();
+          }
+        }, 700);
         break;
       }
     }
   });
-  classObserver.observe(letterPaper, { attributes: true });
+  fullscreenObserver.observe(mutationTarget, { attributes: true, attributeFilter: ['class'] });
+}
 
-  window._checkLetterCloseVisibility = checkIfScrolledToEnd;
-  window._cleanupLetterCloseVisibility = function () {
-    letterPaper.removeEventListener('scroll', checkIfScrolledToEnd);
-    window.removeEventListener('resize', checkIfScrolledToEnd);
-    window.removeEventListener('orientationchange', checkIfScrolledToEnd);
-    mo.disconnect();
-    classObserver.disconnect();
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-  };
-})();
-    </script>
+/* -----------------------
+   Resize handler: recreate floating elements + ensure sizes
+   ----------------------- */
+window.addEventListener('resize', function () {
+  if (letterPaper && letterPaper.classList.contains('fullscreen')) {
+    letterPaper.style.width = '100vw';
+    letterPaper.style.height = '100vh';
+  }
+  clearTimeout(window.resizeTimer);
+  window.resizeTimer = setTimeout(() => {
+    createFloatingElements();
+  }, 500);
+}, { passive: true });
+
+/* -----------------------
+   Init on DOMContentLoaded
+   ----------------------- */
+document.addEventListener('DOMContentLoaded', function () {
+  createFloatingElements();
+  createHeartParticles();
+  addBreathingAnimation();
+
+  setTimeout(() => {
+    if (instructions) instructions.style.opacity = '1';
+  }, 1000);
+
+  setTimeout(() => {
+    const paragraphs = document.querySelectorAll('.letter-content p');
+    paragraphs.forEach((p, index) => p.style.setProperty('--index', index));
+  }, 100);
+});
+
+/* -----------------------
+   Prevent context menu on long press globally
+   ----------------------- */
+document.addEventListener('contextmenu', function (e) {
+  e.preventDefault();
+});
+</script>
 </body>
 </html>
