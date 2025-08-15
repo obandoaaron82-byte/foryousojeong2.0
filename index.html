@@ -547,81 +547,87 @@
   .instructions { bottom: 55px; font-size: 1rem; }
 }
 
-/* Large phones (420px–599px) */
-@media (min-width: 420px) and (max-width: 599px) {
-  .envelope { width: 250px; height: 160px; }
-  .envelope-front::before { border-left: 115px solid transparent; border-right: 115px solid transparent; border-bottom: 100px solid #FFB6C1; }
-  .heart-seal { top: 70px; width: 64px; height: 64px; font-size: 2.2rem; }
-  .letter-paper { width: 280px; height: 240px; transform: translate3d(-50%,-50%,0) scale(0.98); }
-  .letter-content h1 { font-size: 1.8rem; }
-  .close-button { bottom: 95px; padding: 10px 22px; }
-  .instructions { bottom: 50px; font-size: 0.98rem; }
-  .floating-heart, .floating-star { opacity: 0.25; font-size: 0.95rem; }
-}
-
-/* Medium phones (360px–419px) */
-@media (min-width: 360px) and (max-width: 419px) {
-  .envelope { width: 220px; height: 150px; }
-  .envelope-front::before { border-left: 98px solid transparent; border-right: 98px solid transparent; border-bottom: 86px solid #FFB6C1; }
-  .heart-seal { top: 66px; width: 58px; height: 58px; font-size: 2rem; }
-  .letter-paper { width: 240px; height: 200px; }
-  .letter-content h1 { font-size: 1.6rem; }
-  .close-button { bottom: 85px; font-size: 0.95rem; padding: 9px 20px; }
-  .instructions { bottom: 46px; font-size: 0.95rem; }
-}
-
-/* Small phones (320px–359px) */
-@media (min-width: 320px) and (max-width: 359px) {
-  .envelope { width: 200px; height: 140px; }
-  .envelope-front::before { border-left: 88px solid transparent; border-right: 88px solid transparent; border-bottom: 76px solid #FFB6C1; }
-  .heart-seal { top: 60px; width: 52px; height: 52px; font-size: 1.8rem; }
-  .letter-paper { width: 220px; height: 180px; }
-  .letter-content h1 { font-size: 1.45rem; margin-bottom: 18px; }
-  .close-button { bottom: 78px; padding: 8px 18px; font-size: 0.9rem; }
-  .instructions { bottom: 42px; font-size: 0.9rem; }
-  .floating-heart, .floating-star { font-size: 0.9rem; opacity: 0.2; }
-}
-
-/* Very small phones / tiny screens (240px–319px) */
-@media (min-width: 240px) and (max-width: 319px) {
-  .envelope { width: 170px; height: 120px; }
-  .envelope-front::before { border-left: 74px solid transparent; border-right: 74px solid transparent; border-bottom: 64px solid #FFB6C1; }
-  .heart-seal { top: 52px; width: 44px; height: 44px; font-size: 1.4rem; }
-  .letter-paper { width: 190px; height: 160px; }
-  .letter-content h1 { font-size: 1.2rem; }
-  .close-button { bottom: 70px; padding: 7px 16px; font-size: 0.85rem; border-radius: 20px; }
-  .instructions { bottom: 36px; font-size: 0.85rem; }
-  .thank-you { padding: 18px; font-size: 1.1rem; }
-  .floating-heart, .floating-star { opacity: 0.15; }
-}
-
-/* Smartwatch / very tiny screens (<=239px) */
-@media (max-width: 239px) {
-  .envelope { width: 140px; height: 100px; margin-top: 8px; }
-  .envelope-front::before { border-left: 58px solid transparent; border-right: 58px solid transparent; border-bottom: 50px solid #FFB6C1; }
-  .heart-seal { top: 44px; width: 38px; height: 38px; font-size: 1.1rem; }
-  .letter-paper { width: 160px; height: 140px; left: 50%; top: 52%; transform: translate3d(-50%,-50%,0) scale(0.98); padding: 10px; }
-  .letter-paper.fullscreen { width: 100vw; height: 100vh; padding: 12px; overflow: auto; border-radius: 0; }
-  .letter-content { font-size: 0.88rem; line-height: 1.4; }
-  .letter-content h1 { font-size: 1.1rem; }
-  .close-button { bottom: 56px; padding: 6px 12px; font-size: 0.8rem; border-radius: 18px; }
-  .instructions { bottom: 28px; font-size: 0.78rem; }
-  .floating-elements { display: none; }
-}
-
-/* Landscape adjustments for narrow screens */
+/* Ajustes landscape para móviles estrechos */
 @media (max-width: 480px) and (orientation: landscape) {
   .container { padding: 8px; align-items: flex-start; }
-  .envelope { transform: scale(0.95); -webkit-transform: scale(0.95); margin-top: 10px; }
-  .letter-paper { top: 55%; left: 50%; transform: translate3d(-50%,-40%,0) scale(0.95); -webkit-transform: translate3d(-50%,-40%,0) scale(0.95); }
-  .instructions { bottom: 20px; left: 50%; transform: translateX(-50%); -webkit-transform: translate3d(-50%,0,0); }
+  .envelope { transform: scale(0.95); margin-top: 10px; }
+  /* Mantén el paper fullscreen pero reduce padding para paisajes pequeños */
+  .letter-paper { padding: 10px; height: 100vh; width: 100vw; top: 0; left: 0; }
+  .instructions { bottom: 18px; left: 50%; transform: translateX(-50%); }
 }
 
-/* Respect reduced-motion & high-contrast preferences (keeps your original intent) */
+/* Consolidación: móviles grandes hasta tablets pequeñas (>=600px -> cambiamos a layout flotante centrado) */
+/* A partir de 600px empezamos a devolver tamaños fijos y comportamiento "no-fullscreen" */
+@media (min-width: 600px) {
+  /* restablecemos el comportamiento de carta "centrada" */
+  .letter-paper {
+    position: absolute;   /* o fixed según tu layout general */
+    width: 320px;         /* valor base para tablets pequeños */
+    height: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    border-radius: 12px;
+    padding: 22px;
+    overflow: visible;
+  }
+
+  /* encuadre escalable para encabezados */
+  .letter-content h1 { font-size: clamp(1.8rem, 2.5vw, 2rem); }
+  .letter-content { font-size: 1rem; line-height: 1.45; }
+}
+
+/* Medium/large tablets and laptops: escalado progresivo */
+/* 600–768 (tablets portrait / phablets) */
+@media (min-width: 600px) and (max-width: 768px) {
+  .envelope { width: 280px; height: 180px; transform-origin: center top; }
+  .envelope-front::before { border-left: 128px solid transparent; border-right: 128px solid transparent; border-bottom: 115px solid #FFB6C1; }
+  .heart-seal { top: 78px; width: 72px; height: 72px; font-size: 2.4rem; }
+  .letter-paper { width: 320px; height: 300px; padding: 22px; }
+  .close-button { bottom: 95px; }
+  .instructions { bottom: 55px; font-size: 1rem; }
+}
+
+/* 769–991 (tablets landscape / small laptops) */
+@media (min-width: 769px) and (max-width: 991px) {
+  .envelope { width: 300px; height: 190px; }
+  .envelope-front::before { border-left: 138px solid transparent; border-right: 138px solid transparent; border-bottom: 125px solid #FFB6C1; }
+  .heart-seal { top: 82px; width: 76px; height: 76px; font-size: 2.8rem; }
+  .letter-paper { width: 360px; height: 320px; padding: 26px; }
+  .letter-content h1 { font-size: 2.2rem; }
+}
+
+/* 992–1199 (small desktop) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .envelope { width: 320px; height: 205px; }
+  .envelope-front::before { border-left: 150px solid transparent; border-right: 150px solid transparent; border-bottom: 140px solid #FFB6C1; }
+  .heart-seal { top: 88px; width: 80px; height: 80px; font-size: 3rem; }
+  .letter-paper { width: 420px; height: 350px; padding: 30px; }
+  .letter-content h1 { font-size: 2.4rem; }
+}
+
+/* 1200–1599 (desktop) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .envelope { width: 360px; height: 230px; }
+  .envelope-front::before { border-left: 178px solid transparent; border-right: 178px solid transparent; border-bottom: 160px solid #FFB6C1; }
+  .heart-seal { top: 95px; width: 90px; height: 90px; font-size: 3.2rem; }
+  .letter-paper { width: 520px; height: 420px; padding: 36px; }
+  .letter-content h1 { font-size: 2.6rem; }
+}
+
+/* >=1600 (extra large desktop) */
+@media (min-width: 1600px) {
+  .envelope { width: 420px; height: 270px; }
+  .envelope-front::before { border-left: 210px solid transparent; border-right: 210px solid transparent; border-bottom: 190px solid #FFB6C1; }
+  .heart-seal { top: 108px; width: 110px; height: 110px; font-size: 4rem; }
+  .letter-paper { width: 640px; height: 520px; padding: 40px; }
+  .letter-content h1 { font-size: 3rem; }
+}
+
+/* Respect reduced-motion & high-contrast preferences */
 @media (prefers-reduced-motion: reduce) {
   .floating-heart, .floating-star, .heart-seal, .envelope { animation: none !important; transition: none !important; }
 }
-
 @media (prefers-contrast: more) {
   body { background: linear-gradient(135deg, #FFDDE6 0%, #FFF0F3 50%, #FFE8F2 100%); }
   .envelope-back, .envelope-front { box-shadow: 0 8px 30px rgba(0,0,0,0.25); border-width: 3px; }
