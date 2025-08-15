@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>소정에게 보내는 사랑 편지 💕</title>
     <link href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Gamja+Flower:wght@400&family=Poor+Story:wght@400&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://imgur.com/gallery/logo-M2xCAxh.png">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/BebsMfr.png.png">
     <style>
         * {
             margin: 0;
@@ -68,55 +68,58 @@
             z-index: 10;
         }
         
-        /* Envelope styling */
-        .envelope {
-            position: relative;
-            width: 280px;
-            height: 180px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            transform-style: preserve-3d;
-        }
-        
-        .envelope:hover {
-            transform: scale(1.02) translateY(-3px);
-            filter: drop-shadow(0 8px 15px rgba(255, 105, 180, 0.3));
-        }
-        
-        .envelope-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
-            border-radius: 8px;
-            border: 2px solid #FF69B4;
-            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
-        }
-        
-       .envelope-front {
+/* Envelope styling */
+.envelope {
+    position: relative;
+    width: 280px;
+    height: 180px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.envelope:hover {
+    transform: scale(1.02) translateY(-3px);
+    filter: drop-shadow(0 8px 15px rgba(255, 180, 190, 0.22)); /* un poquito más notoria */
+}
+
+.envelope-back {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+    background: linear-gradient(135deg, #FFF3F5 0%, #FFE6EB 100%); /* rosa claro pero más definido */
     border-radius: 8px;
-    border: 2px solid #FF69B4;
-    transform-origin: top center; /* clave para que el giro salga limpio */
+    border: 2px solid #FFCAD4; /* borde un poco más oscuro */
+    box-shadow: 0 6px 20px rgba(255, 180, 190, 0.22); /* sombra ligeramente más fuerte */
+}
+
+.envelope-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #FFE6EB 0%, #FFD3DC 100%); /* frente un poquito más rosado */
+    border-radius: 8px;
+    border: 2px solid #FFB8C6; /* borde más definido */
+    transform-origin: top center;
     transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
     z-index: 2;
 }
+        
 
+/* Ensure the envelope pseudo-element is robustly centered and non-interactive */
 .envelope-front::before {
-    content: '';
-    position: absolute;
-    top: 0px;
-    left: 50%;
-    transform: translateX(-50%) rotate(180deg);
-    width: 0;
-    height: 0;
-    border-left: 138px solid transparent;
-    border-right: 138px solid transparent;
-    border-bottom: 125px solid #FFB6C1; /* ajustado para encajar mejor */
-    border-radius: 4px;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate3d(-50%, 0, 0) rotate(180deg);
+  -webkit-transform: translate3d(-50%, 0, 0) rotate(180deg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  border-radius: 4px;
 }
 
 .envelope.opened .envelope-front {
@@ -188,90 +191,162 @@
             100% { transform: translateX(-50%) scale(0); opacity: 0; }
         }
         
-        /* Letter paper */
-        .letter-paper {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 220px;
-            height: 150px;
-            background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
-            border: 2px solid #FFB6C1;
-            border-radius: 8px;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            filter: blur(20px);
-            overflow: hidden;
-        }
-        
-        .letter-paper.expanding {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            filter: blur(10px);
-        }
-        
-        .letter-paper.fullscreen {
-            width: 100vw;
-            height: 100vh;
-            border-radius: 0;
-            transform: translate(-50%, -50%) scale(1);
-            filter: blur(0px);
-            overflow-y: auto;
-            padding: 25px;
-            box-sizing: border-box;
-        }
-        
-        /* Letter content */
-        .letter-content {
-            opacity: 0;
-            transition: opacity 1s ease 0.5s;
-            font-family: 'Poor Story', cursive;
-            line-height: 1.7;
-            color: #4A4A4A;
-            font-size: 0.95rem;
-            height: 100%;
-            width: 100%;
-            position: relative;
-        }
-        
-        .letter-paper.expanding .letter-content,
-        .letter-paper.fullscreen .letter-content {
-            opacity: 1;
-        }
-        
-        .letter-content h1 {
-            font-family: 'Cute Font', cursive;
-            font-size: 2.2rem;
-            color: #FF1493;
-            text-align: center;
-            margin-bottom: 25px;
-            text-shadow: 2px 2px 4px rgba(255, 105, 180, 0.3);
-        }
-        
-        .letter-content p {
-            margin-bottom: 16px;
-            text-align: justify;
-        }
-        
-        .letter-content .highlight {
-            color: #FF1493;
-            font-weight: bold;
-            text-decoration: underline;
-            text-decoration-color: #FFB6C1;
-            text-decoration-thickness: 2px;
-        }
-        
-        .letter-content .signature {
-            text-align: right;
-            font-family: 'Cute Font', cursive;
-            font-size: 1.3rem;
-            color: #FF69B4;
-            margin-top: 30px;
-        }
-        
+/* --- Smooth open/close for the paper (replace previous .letter-paper block) --- */
+
+.letter-paper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  height: auto;
+
+  /* usamos max-* para animaciones más suaves */
+  max-width: 260px;
+  max-height: 170px;
+  box-sizing: border-box;
+
+  background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
+  border: 2px solid #FFB6C1;
+  border-radius: 12px;
+  padding: 18px;
+
+  transform: translate(-50%, -45%) translateY(10px);
+  opacity: 0;
+  pointer-events: none;
+
+  /* transición consistente para abrir y cerrar (suave, reversible) */
+  transition:
+    opacity 420ms cubic-bezier(.2,.9,.3,1),
+    transform 420ms cubic-bezier(.2,.9,.3,1),
+    max-width 420ms cubic-bezier(.2,.9,.3,1),
+    max-height 420ms cubic-bezier(.2,.9,.3,1),
+    padding 320ms cubic-bezier(.2,.9,.3,1),
+    box-shadow 320ms ease,
+    border-radius 320ms ease,
+    filter 360ms ease;
+
+  will-change: transform, opacity, max-width, max-height;
+  z-index: 100;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  filter: blur(6px);
+}
+
+/* Estado "expanding" (visible) — anima desde los max-* hacia valores mayores */
+.letter-paper.expanding {
+  /* límites finales (animamos max-*, no width/height fijos) */
+  max-width: min(900px, 92vw);
+  max-height: min(720px, 86vh);
+
+  /* opcional: cuando se vea grande, permitir que el elemento crezca dinámicamente */
+  width: auto;
+  height: auto;
+
+  transform: translate(-50%, -50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+  filter: blur(0);
+  border-radius: 12px;
+  padding: 26px;
+  overflow-y: auto;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+}
+
+/* Variante semi-fullscreen (mantiene márgenes pequeños) */
+.letter-paper.fullscreen {
+  max-width: calc(100vw - 4vw);
+  max-height: calc(100vh - 4vh);
+  width: auto;
+  height: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 28px;
+  border-radius: 10px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.26);
+  overflow-y: auto;
+  opacity: 1;
+  pointer-events: auto;
+  filter: blur(0);
+}
+
+/* Contenido: aparece con pequeño delay al abrir, desaparece rápido al cerrar */
+.letter-content {
+  opacity: 0;
+  /* duraciones cortas y delay controlado */
+  transition: opacity 260ms ease;
+  transition-delay: 180ms; /* se muestra después del inicio de apertura */
+  font-family: 'Poor Story', cursive;
+  line-height: 1.65;
+  color: #4A4A4A;
+  font-size: clamp(0.95rem, 1.25vw, 1.05rem);
+  height: 100%;
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  overflow: visible;
+  padding-right: 6px;
+}
+
+/* Mostrar contenido cuando está expandido (delay mantiene sensación natural) */
+.letter-paper.expanding .letter-content,
+.letter-paper.fullscreen .letter-content {
+  opacity: 1;
+  transition-delay: 180ms;
+}
+
+/* Si NO está expandido (cierre), quitar delay para que el texto desaparezca inmediatamente
+   y evitar saltos visuales mientras el contenedor se encoge */
+.letter-paper:not(.expanding) .letter-content {
+  opacity: 0;
+  transition-delay: 0ms;
+}
+
+/* Titular y párrafos (sin cambios funcionales, solo pequeños refinamientos) */
+.letter-content h1 {
+  font-family: 'Cute Font', cursive;
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  color: #FF1493;
+  text-align: center;
+  margin-bottom: 18px;
+  text-shadow: 2px 2px 6px rgba(255, 105, 180, 0.22);
+  line-height: 1.15;
+}
+
+.letter-content p {
+  margin-bottom: 14px;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.letter-content .signature {
+  text-align: right;
+  font-family: 'Cute Font', cursive;
+  font-size: 1.15rem;
+  color: #FF69B4;
+  margin-top: 22px;
+}
+
+/* Sutileza visual: sombra interior leve cuando está abierto */
+.letter-paper.expanding::after,
+.letter-paper.fullscreen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+.letter-content .highlight { 
+    color: #FF1493; 
+    font-weight: bold; 
+    text-decoration: underline; 
+    text-decoration-color: #FFB6C1; 
+    text-decoration-thickness: 2px; 
+}
+
         /* Close button */
         .close-button {
             position: fixed;
@@ -358,18 +433,34 @@
             50% { opacity: 0.4; }
         }
         
-        /* Copyright */
-        .copyright {
-            position: fixed;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.7rem;
-            color: #FF69B4;
-            opacity: 0.6;
-            text-align: center;
-            z-index: 1002;
-        }
+        /* Copyright — colocado por detrás del paper */
+.copyright {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #FF69B4;
+  opacity: 0.6;
+  text-align: center;
+
+  /* z-index menor que .letter-paper (que usa z-index:100) */
+  z-index: 40;
+
+  /* evitar interacción accidental cuando el paper está encima */
+  pointer-events: none;
+
+  /* transición sutil si quieres atenuarlo cuando el modal abre */
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+
+/* Si aplicas la clase .body--modal-open al <body> al abrir el paper
+   (recomendado), atenuamos aún más el copyright para que no compita visualmente */
+.body--modal-open .copyright {
+  opacity: 0.28;
+  transform: translateX(-50%) translateY(4px);
+}
+
         
         .hidden {
             display: none;
@@ -401,7 +492,7 @@
    Pegar al final del <style>
    ------------------------------ */
 
-/* Extra large desktop (pantallas muy grandes, 1600px+) */
+/* Extra large desktop (1600px+) */
 @media (min-width: 1600px) {
   .envelope { width: 420px; height: 270px; }
   .envelope-front::before { border-left: 210px solid transparent; border-right: 210px solid transparent; border-bottom: 190px solid #FFB6C1; }
@@ -448,7 +539,7 @@
 /* Tablets portrait / Phablets (600px–768px) */
 @media (min-width: 600px) and (max-width: 768px) {
   .envelope { width: 280px; height: 180px; transform-origin: center top; }
-  .envelope-front::before { border-left: 128px solid transparent; border-right: 128px solid transparent; border-bottom: 115px solid #FFB6C1; top: 0; }
+  .envelope-front::before { border-left: 128px solid transparent; border-right: 128px solid transparent; border-bottom: 115px solid #FFB6C1; }
   .heart-seal { top: 78px; width: 72px; height: 72px; font-size: 2.4rem; }
   .letter-paper { width: 320px; height: 300px; }
   .letter-paper.fullscreen { padding: 22px; }
@@ -461,7 +552,7 @@
   .envelope { width: 250px; height: 160px; }
   .envelope-front::before { border-left: 115px solid transparent; border-right: 115px solid transparent; border-bottom: 100px solid #FFB6C1; }
   .heart-seal { top: 70px; width: 64px; height: 64px; font-size: 2.2rem; }
-  .letter-paper { width: 280px; height: 240px; transform: translate(-50%, -50%) scale(0.98); }
+  .letter-paper { width: 280px; height: 240px; transform: translate3d(-50%,-50%,0) scale(0.98); }
   .letter-content h1 { font-size: 1.8rem; }
   .close-button { bottom: 95px; padding: 10px 22px; }
   .instructions { bottom: 50px; font-size: 0.98rem; }
@@ -504,30 +595,29 @@
   .floating-heart, .floating-star { opacity: 0.15; }
 }
 
-/* Smartwatch / pantallas muy pequeñas (<=239px) */
+/* Smartwatch / very tiny screens (<=239px) */
 @media (max-width: 239px) {
-  /* Reduce al máximo y evita solapamientos */
   .envelope { width: 140px; height: 100px; margin-top: 8px; }
   .envelope-front::before { border-left: 58px solid transparent; border-right: 58px solid transparent; border-bottom: 50px solid #FFB6C1; }
   .heart-seal { top: 44px; width: 38px; height: 38px; font-size: 1.1rem; }
-  .letter-paper { width: 160px; height: 140px; left: 50%; top: 52%; transform: translate(-50%, -50%) scale(0.98); padding: 10px; }
-  .letter-paper.fullscreen { width: 100vw; height: 100vh; padding: 12px; overflow: auto; }
+  .letter-paper { width: 160px; height: 140px; left: 50%; top: 52%; transform: translate3d(-50%,-50%,0) scale(0.98); padding: 10px; }
+  .letter-paper.fullscreen { width: 100vw; height: 100vh; padding: 12px; overflow: auto; border-radius: 0; }
   .letter-content { font-size: 0.88rem; line-height: 1.4; }
   .letter-content h1 { font-size: 1.1rem; }
   .close-button { bottom: 56px; padding: 6px 12px; font-size: 0.8rem; border-radius: 18px; }
   .instructions { bottom: 28px; font-size: 0.78rem; }
-  .floating-elements { display: none; } /* ahorra recursos en pantallas diminutas */
+  .floating-elements { display: none; }
 }
 
-/* Landscape adjustments for narrow screens (mejora en móviles apaisados) */
+/* Landscape adjustments for narrow screens */
 @media (max-width: 480px) and (orientation: landscape) {
   .container { padding: 8px; align-items: flex-start; }
-  .envelope { transform: scale(0.95); margin-top: 10px; }
-  .letter-paper { top: 55%; left: 50%; transform: translate(-50%, -40%) scale(0.95); }
-  .instructions { bottom: 20px; left: 50%; transform: translateX(-50%); }
+  .envelope { transform: scale(0.95); -webkit-transform: scale(0.95); margin-top: 10px; }
+  .letter-paper { top: 55%; left: 50%; transform: translate3d(-50%,-40%,0) scale(0.95); -webkit-transform: translate3d(-50%,-40%,0) scale(0.95); }
+  .instructions { bottom: 20px; left: 50%; transform: translateX(-50%); -webkit-transform: translate3d(-50%,0,0); }
 }
 
-/* Accessibility: aumenta contraste/espaciado cuando prefieren-reduced-motion o prefer-contrast */
+/* Respect reduced-motion & high-contrast preferences (keeps your original intent) */
 @media (prefers-reduced-motion: reduce) {
   .floating-heart, .floating-star, .heart-seal, .envelope { animation: none !important; transition: none !important; }
 }
@@ -560,80 +650,81 @@
     <!-- Letter paper -->
     <div class="letter-paper" id="letterPaper">
         <div class="letter-content" id="letterContent">
-         <h1>Sojeong 💕 — foryousojeong 2.0 😎👌</h1>
+         <h1>Sojeong 💕</h1>
 
-<p>내 사랑, 분명히 <span class="highlight">웹사이트</span>가 조금 바뀐 걸 눈치챌 거야 — 나는 이걸 foryousojeong 2.0이라고 불러. 다양한 화면 크기에 맞게 업데이트되고 최적화되었고 몇 가지 새로운 놀라움도 있어. 하지만 무엇보다 중요한 건 변하지 않았어: 이 모든 것은 너를 향한 내 마음의 한 조각이야.</p>
+<p>내 사랑 안녕. 이 편지는 2.1 버전이야 — 더 나아지고 다듬어진 버전이야. 첫 번째 버전의 분위기와 진심을 그대로 유지하면서 이번에는 더 깊고 더 사랑스러운 마음으로 적었어. 내가 너를 얼마나 사랑하는지를 보여주고 싶었어. 너는 정말 소중하고 특별한 사람이야, 그리고 조건 없는 사랑과 따뜻한 돌봄을 받을 자격이 있어. 그래서 네가 너의 가치나 목적을 의심하게 될 때마다 이 편지를 다시 읽어주길 바라. 나… 사실 너를 너무 많이 보고 싶어 🤭 하지만 그건 내가 너를 온 마음으로 사랑하기 때문이야. 가끔은 내가 두렵거나, 흔들리거나, 아파하거나, 걱정하는 모습을 볼 수도 있겠지만… 있잖아? 그건 내가 느끼는 감정이 진짜이기 때문이야. 그리고 이 편지를 통해 꼭 기억해 줬으면 해: 아무리 멀리 떨어져 있어도 우리는 항상 서로에게 다가갈 길을 찾게 될 거라는 걸.</p>
 
-<p>오늘은 너에게 특별한 걸 주고 싶어… 네가 날 가깝게 느끼고 싶을 때마다 꺼내 읽을 수 있는 것, 매일 마음속에 간직할 수 있는 작은 기억이 되길 바래.</p>
+<p><span class="highlight">사랑해 — 진심으로, 깊이.</span> 이 사랑은 지금까지 내가 느껴본 어떤 것과도 달라. 너를 생각하기만 해도 나도 모르게 미소가 지어져. 네가 여기 내 앞에 서 있다고 상상하면 감당할 수 없을 만큼 기쁨이 벅차올라.</p>
 
-<p>먼저, <span class="highlight">용서를 구하고 싶어</span> — 너를 데리러 가지 못했던 순간들, 내 부재로 네가 외로웠던 시간들에 대해. 정말 미안해.</p>
+<p>네가 내 앞에 서 있는 그날, 나는 잠시 말이 없을지도 몰라, 기쁨의 눈물이 흐를 거야. 나는 달려가서 너를 꼭 안고 속삭일 거야, “사랑해.” 그 순간 우리 사이의 거리는 사라질 거야. 나는 너의 눈을 들여다보고, 부드럽게 네 얼굴을 만지며, 내가 가진 가장 순수한 사랑으로 너에게 입 맞출 거야.</p>
 
-<p>항상 너를 데리러 가고 싶었다는 걸 알아줬으면 해; 난 진심이었어. 가족 문제, 생활비, 여러 상황들이 복잡했지만 — <span class="highlight">네 덕분에 이제 노트북이 생겼고</span> 더 자유롭게 공부할 기회가 생겼어. 너에게 감사해. 덕분에 내가 열정을 느끼는 수업을 시작했고 우리 미래의 문이 열리는 것 같아.</p>
+<p><span class="highlight">내 감정은 일시적이지 않아.</span> 전에 말했듯이 나는 너와 결혼해서 아이를 키우고 싶어. 나는 네 가족을 만나서 따뜻하게 인사하고 싶고, 때가 되면 너도 내 가족을 만나기를 바래.</p>
 
-<p><span class="highlight">너는 내 삶의 축복이야.</span> 너는 아무것도 의도하지 않아도 나를 더 좋은 사람으로 만들었어. 너는 내 가장 소중한 선물, 내 보물, 내 꿈, 나의 우선순위야.</p>
+<p><span class="highlight">너는 정말 내 삶의 축복이야.</span> 너는 애쓰지 않아 — 그저 존재하는 것만으로 — 나를 더 나은 사람으로 만들어줘. 너는 나의 가장 소중한 선물, 내 보물, 내 꿈, 내 우선순위야. 진정한 사랑의 아름다움을 보여줘서 고마워.</p>
 
-<p>내 계획은 더 좋은 직장을 얻기 위해 노력하는 거야 — 어쩌면 국제 기업에서, 미국이나 캐나다에서 — 그래야 우리가 더 자주 만날 수 있고 함께 안정되고 사랑이 가득한 삶을 쌓을 수 있을 것 같아.</p>
+<p>항상 너에게 곁에 있어주고 싶었다는 걸 알아줘; 나는 온 마음을 다해 그것을 의미했어. 무엇보다 먼저, <span class="highlight">용서를 구하고 싶어</span> — 네가 내가 너를 데리러 가지 못했던 시간들, 내가 없어서 네가 외로움을 느꼈던 순간들에 대해서. 정말 미안해. 그 공허한 순간들을 되돌리고 내 팔로 너를 감싸 안아주고 싶어.</p>
 
-<p><span class="highlight">기억해: 이제 너는 혼자가 아니야.</span> 나는 너를 돌보고, 지지하고, 사랑과 책임으로 이 관계를 지키기 위해 싸울 거야.</p>
+<p><span class="highlight">사랑해 — 진심으로, 깊이.</span> 이 사랑은 지금까지 내가 느껴본 어떤 것과도 달라. 너를 생각하기만 해도 나도 모르게 미소가 지어져. 네가 여기 내 앞에 서 있다고 상상하면 감당할 수 없을 만큼 기쁨이 벅차올라.</p>
 
-<p>내 마음은 일시적인 것이 아니야. <span class="highlight">나는 너와 결혼하고 아이를 갖고 싶어</span>, 전에 말했듯이. 너의 가족을 만나 인사하고 싶고, 적절한 때가 되면 네가 내 가족을 만나는 날도 오길 원해.</p>
+<p>네가 내 앞에 서 있는 그날, 나는 잠시 말이 없을지도 몰라, 기쁨의 눈물이 흐를 거야. 나는 달려가서 너를 꼭 안고 속삭일 거야, “사랑해.” 그 순간 우리 사이의 거리는 사라질 거야. 나는 너의 눈을 들여다보고, 부드럽게 네 얼굴을 만지며, 내가 가진 가장 순수한 사랑으로 너에게 입 맞출 거야.</p>
 
-<p>처음 네가 올 때 아버지에게 모든 걸 바로 말하지 않을 수도 있어; 안정이 있을 때 말하고 싶어. 하지만 너와 함께한 모든 순간 — 웃음, 눈물, 눈빛, 작은 몸짓들 — 이 모든 것이 내 인생에서 가장 큰 모험이었어.</p>
+<p><span class="highlight">내 감정은 일시적이지 않아.</span> 전에 말했듯이 나는 너와 결혼해서 아이를 키우고 싶어. 나는 네 가족을 만나서 따뜻하게 인사하고 싶고, 때가 되면 너도 내 가족을 만나기를 바래.</p>
 
-<p>진정한 사랑의 아름다움을 가르쳐줘서 고마워. 그래서 너에게 잊을 수 없는 것을 주고 싶었어: 내가 아는 프로그래밍으로 이 가상 편지를 만들었어. <span class="highlight">단지 글이 아니라: 네가 영원히 간직할 수 있는 내 마음의 일부야.</span></p>
+<p><span class="highlight">너는 정말 내 삶의 축복이야.</span> 너는 애쓰지 않아 — 그저 존재하는 것만으로 — 나를 더 나은 사람으로 만들어줘. 너는 나의 가장 소중한 선물, 내 보물, 내 꿈, 내 우선순위야. 진정한 사랑의 아름다움을 보여줘서 고마워.</p>
 
-<p><span class="highlight">사랑해.—정말로, 깊이 사랑해.</span> 이 사랑은 내가 이전에 느껴본 어떤 것과도 달라. 너를 생각만 해도 미소가 나와. 네가 나를 보러 오는 상상만으로도 나를 참을 수 없을 만큼 기쁘게 해.</p>
+<p>항상 너에게 곁에 있어주고 싶었다는 걸 알아줘; 나는 온 마음을 다해 그것을 의미했어. 무엇보다 먼저, <span class="highlight">용서를 구하고 싶어</span> — 네가 내가 너를 데리러 가지 못했던 시간들, 내가 없어서 네가 외로움을 느꼈던 순간들에 대해서. 정말 미안해. 그 공허한 순간들을 되돌리고 내 팔로 너를 감싸 안아주고 싶어.</p>
 
-<p>네가 내 앞에 서 있는 그날, 아마 잠깐 말문이 막힐 거야, 기쁨의 눈물을 흘릴 거고, 뛰어나가 널 꼭 안고 말할 거야: “사랑해”. 그 순간 우리 사이의 거리는 사라질 거야. 네 눈을 보고, 네 얼굴을 쓰다듬고, 내가 가진 가장 순수한 사랑으로 네게 키스할 거야.</p>
+<p>너 때문에 지금 나는 노트북도 생겼고 더 공부할 자유를 얻었어. 정말 고마워. 네가 내가 정말로 필요했던 과정을 시작하도록 도와줬고, 왠지 작은 걸음들이 우리 미래로 가는 문을 하나씩 열고 있는 것 같아. 나는 더 나은 미래를 만들기 위해 열심히 일하고 있어 — 아마 미국이나 캐나다의 국제 회사에서 더 탄탄한 직장을 구해서 — 우리가 더 자주 만나고 안정적이고 사랑으로 가득한 삶을 함께 만들 수 있게.</p>
 
-<p>여행할 준비가 되었을 때, 내가 KakaoTalk으로 보낸 동영상과 정보를 조심스럽게 보관해 둘게, 네가 길을 찾고 무사히 도착할 수 있게. 그리고 네가 오면 원하는 만큼 사진을 찍어 — 가족과 주변 사람들에게 보여줘. 거리가 허상이 아니라 참되고 좋은 무언가일 수 있다는 걸 보여주자: 우리의 사랑은 피상적이지 않고, 순수하고 깊은 것이라는 걸.</p>
+<p><span class="highlight">기억해: 너는 더 이상 혼자가 아니야.</span> 나는 너를 돌보고, 너를 지지하며, 사랑과 책임으로 이 관계를 지키기 위해 싸울 거야. 너는 항상 강해야만 하는 사람이 아니야. 나는 너를 세워주기 위해 여기 있어 — 판단하거나 상처 주거나 버리기 위해 있는 게 아니야. 너는 죄책감 없는 사랑을 받을 자격이 있어. 네가 내게 준 모든 것에 감사해. 너는 충분해. 네가 의심하거나 도망가고 싶었던 시간들을 용서해줘 — 나는 이해해. 다른 사람들의 의견과 상처 주는 전통에 맞서는 것은 쉽지 않으니까.</p>
 
-<p><span class="highlight">내가 이 편지를 네게 건넸을 때 세상에 네 신뢰를 외쳤어</span> — 네가 준 노트북으로 공부를 마친 뒤 쓴 이 편지 때문에 — 넌 나에게 창작하고 꿈꾸고 매일 더 나아지게 하는 영감이니까.</p>
+<p>우리를 갈라놓으려는 목소리들을 무시하고 우리만의 이야기를 쓰자. 이 관계는 두 개의 연결된 마음이 박자를 맞추는 것 같아. 드물고 소중해 — 우리 함께 지켜주고, 즐기고, 키워가자.</p>
 
-<p>하나님은 우리를 하나님의 형상대로 창조하셨고, 우리에게 놀라운 목적을 주셨어: 그분의 자녀, 동반자 되어 창조물을 다스리는 것이었어. 처음부터 하나님은 우리에게 완전하고 생명으로 가득한 세상을 주셨고, 거기는 거룩함 안에서 기쁨을 누리도록 마련된 곳이었어. 하나님은 사랑으로 우리에게 모든 것을 주셨고, 그분의 뜻은 선하며 그가 하시는 모든 일은 선해.</p>
+<p>네가 외롭거나 길을 잃은 느낌이 들거나 두려울 때면 이 편지를 펼쳐서 나와 함께 말해줘: <span class="highlight">“나는 사랑받고, 존중받고, 소중히 여겨진다. 나에게는 나를 돌봐주고 내 가치를 보여주며 복음과 은혜를 함께 나누는 남자친구가 있다.”</span></p>
 
-<p>하지만 원수는 거짓으로 그 연합을 깨뜨렸어. 그 거짓은 우리를 하나님으로부터 떼어 놓았고, 해를 끼치는 태도와 선택에 묶이게 했으며 우리로 하여금 의심하게 하고 원래의 자유로부터 멀어지게 했어. 그럼에도 불구하고 하나님은 우리를 버리지 않으셨어. 사랑으로 가까이 계시며 말씀하시고 기다리시며 우리를 회복시키기 위한 길을 예비하셨어.</p>
+<p>진정한 사랑의 아름다움을 보여줘서 고마워. 그래서 너에게 잊을 수 없는 무언가를 주고 싶었어: 내가 아는 프로그래밍으로 이 가상 편지를 만들어 줬어. 단어만이 아니라 — 너가 영원히 간직할 수 있는 내 마음의 일부야. 오늘은 너에게 특별한 것을 주고 싶었어 — 언제든 내 곁이 느껴지고 싶을 때 열어볼 수 있는 장소; 매일 너의 마음에 간직할 수 있는 부드러운 기억.</p>
 
-<p>그 길의 중심에는 그리스도의 구속 사역이 있어: 그리스도를 통해 우리는 다시 하나님의 자녀로 받아들여졌어. 그분의 은혜로 우리는 죄와 죄책에서 깨끗하게 되었고, 용서와 존엄과 새 생명으로 회복되어 하나님 앞에 다시 세워졌어. 이것은 우리의 공로가 아니라 예수님의 온전한 사랑과 사역에 의한 것이야: 용서, 존귀함, 새 삶이 주어진 거야.</p>
+<p>여행할 준비가 되었을 때, 내가 카카오톡으로 보낸 영상들과 정보들을 안전하게 보관해 두고 필요할 때 찾을 수 있게 해. 올 때는 사진을 마음껏 찍어 — 네 가족과 주위 사람들에게 보여줘. 우리가 먼 거리가 환상이 아니라 진짜 아름다운 무언가로 가는 길이었다는 걸 보여주자: 우리의 사랑은 얕지 않고 순수하며 깊어.</p>
 
-<p>그것이 바로 우리에게 소망을 되돌려 주고 우리를 붙들어 준 <span class="highlight">참된 복음</span>이야: 창조하시고 사랑하시며 찾아 회복하시는 하나님. 그래서 오늘 우리는 담대히 말할 수 있어 — 우리가 귀하고 깨끗하며 그분과 교제하며 살도록 부르심받았다고.</p>
+<p><span class="highlight">네가 올 때 나는 한 걸음씩 안내할게.</span> 내 위치: 코스타리카, 카르타고, 카르타고, 케브라디야(Quebradilla).</p>
 
-<p>이제 우리의 책임은 단순하고 아름다워: 날마다 하나님과의 관계를 가꾸는 거야. 매일 그분을 더 알아가고 — 말씀을 읽고 기도하며 신뢰함으로 — 우리의 믿음(그분에 대한 신뢰)이 점점 더 굳건해지도록 하는 것. 그리스도인의 삶은 짐의 목록이 아니라 살아 있는 관계야: 그분과 동행하며 그분의 임재로 변화되고 그분의 선하심을 삶으로 드러내는 것.</p>
+<p>큰 다리 두 개와 파세오 메트로폴리(Paseo Metrópoli)라는 쇼핑몰을 보면 가까워진 거야. 스타벅스, 맥도날드, 타코벨, 피자헛과 상점들, 약국들, 편의점이 줄지어 있는 길을 지나게 될 거야. 주유소에서 방향을 틀어 시골길을 건너면 내가 기다리고 있을 큰 쇼핑몰과 슈퍼마켓을 찾게 될 거야.</p>
 
-<p>항상 기억하길 바래: 너는 하나님의 딸이야, 그분과 함께 다스리도록 창조되었고 거룩함과 자유로 부르심받았어. 그 가치는 누구도 빼앗을 수 없어. 혹시 의심이 들면 이 진리로 돌아와: 하나님은 너를 사랑하시고 용서하시며 완전히 회복시켜 주셨어.</p>
+<p>준비되면 카카오톡으로 GPS 위치를 보낼게, 사진과 영상으로 길 안내해 줄 테니 절대 길을 잃지 않을 거야. 함께 도시도, 내 집도, 내 문화도, 내가 좋아하는 음식들도 탐험하자.</p>
 
-<p>이 메시지는 우리가 사랑해 온 그 진리이며, 어려운 날들을 견디게 한 바로 그 참된 복음이야 — 우리를 하나로 묶고 미래에 소망을 주는 복음.</p>
+<p>내가 너에게 복음을 전했던 날을 기억하니? 그 순간은 내가 간직한 가장 특별한 기억 중 하나야. 너와 함께 하나님 이야기를 나누는 것이 거룩하게 느껴졌고, 함께 희망과 온기를 나눈 게 소중했어. 그 날을 기억해주길 바래, 나는 그 날이 네게 늘 변함없는 빛이 되길 원해 — 우리를 향한 하나님의 선하심을 상기시키는 빛.</p>
 
-<p><span class="highlight">내가 너를 향한 사랑:</span> 나는 변함없고 인내하는 진실한 사랑으로 너를 사랑해. 나는 오늘도, 언제나 네 곁에 있을게.</p>
+<p>하나님은 우리를 자신의 형상으로 창조하시고 놀라운 목적을 주셨어: 그분의 자녀가 되어 창조를 돌보는 동반자가 되는 것. 처음부터 하나님은 생명과 기쁨을 위한 세상에 우리를 두셨어. 사랑으로 모든 것을 주셨고, 그분의 길은 선하셔.</p>
 
-<p><span class="highlight">너의 영적 가치와 내게의 너:</span> 너는 유일하고 특별하며 받아들여진 존재야. 너는 하나님의 형상으로 지음 받은 창조의 왕관이야. 누구에게도 너를 깎아내리게 하지 마.</p>
+<p>그럼에도 거짓과 깨어짐이 세상에 들어와 우리를 멀어지게 했어. 그 거짓들은 우리를 상처 입히고 우리를 우리가 만들어진 자유에서 멀어지게 했지. 하지만 그때조차 하나님은 우리를 버리지 않으셨어. 가까이 머무르시며 우리를 다시 인도하실 길을 준비하셨지.</p>
 
-<p><span class="highlight">복음(희망):</span> 하나님은 우리에게 용서와 회복과 새 생명을 제공하셔. 그 진리를 신뢰해; 힘이 필요할 때마다 너의 힘이 되게 해.</p>
+<p>그 길의 핵심은 그리스도의 구속 사역이야. 그분을 통해 우리는 하나님의 가족으로 다시 환영받아. 은혜로 우리는 죄책에서 씻기고 용서와 존엄으로 회복되며 새로운 생명을 얻어. 이것은 우리가 얻어내는 것이 아니라 선물로 주어지는 것 — 예수의 완전한 사랑과 희생에서 오는 거야.</p>
 
-<p>네가 올 때 내가 한 걸음씩 안내할게. 내 위치: <span class="highlight">Costa Rica, Cartago, Cartago, Quebradilla.</span></p>
+<p>그 진리 — 진정한 복음 — 이 내 희망을 회복시켰고 우리를 붙잡는 것이야: 창조하시고 사랑하시며 찾으시고 회복하시는 하나님. 그 때문에 우리는 확신을 가지고 말할 수 있어: 우리는 소중하고, 그분과 함께 사는 삶으로 부름받았다는 것을.</p>
 
-<p>두 개의 철로와 큰 다리 두 개, 그리고 Paseo Metrópoli라는 쇼핑몰이 보이면 가까워진 거야. 그다음에는 Starbucks, McDonald’s, Taco Bell, Pizza Hut 같은 식당들이 있는 길을 보게 될 거야; 약국들, 편의점, 상점들도 있어. 주유소에서 돌면 시골 풍경을 지나 큰 쇼핑몰과 대형 슈퍼마켓을 만나게 될 거야. 거기서 내가 기다리고 있을게.</p>
+<p>우리의 공유된 책임은 부드럽고 아름다워: 매일 하나님과의 관계를 돌보는 것. 그분의 말씀을 통해 배우고 기도하며 신뢰하여 믿음이 더 깊어지게 하는 것. 기독교인의 삶은 짐의 목록이 아니라 우리를 변화시키고 그분의 선하심을 삶을 통해 보여주는 살아 있는 관계야.</p>
 
-<p>준비되면 KakaoTalk으로 GPS 위치를 보내고 사진과 동영상으로 한 걸음씩 동행하며 길을 잃지 않게 도울게. 그리고 우리 함께 도시도, 내 집도, 내 문화도, 그리고 내가 제일 좋아하는 음식도 소개할게.</p>
+<p>항상 기억해, 너는 하나님의 딸이야 — 독특하고 거룩함과 자유로 부름받았으며 존엄으로 관을 쓴 존재야. 그 가치는 결코 빼앗길 수 없어. 네가 의심할 때면 우리가 함께 나눴던 그 기억과 하나님이 너를 사랑하시고 완전히 회복하신다는 진리로 돌아가.</p>
 
-<p><span class="highlight">항상 강할 필요는 없어.</span> 나는 너를 지탱하려고 여기 있어, 판단하거나 상처 주거나 버리려고가 아니야. 내 사랑 때문에 죄책감을 느낄 필요 없어; 너는 사랑받을 자격이 있어. 네가 해준 모든 일에 감사하고 있어. 너는 충분해. 네가 의심하거나 도망치고 싶었던 순간들을 용서해; 이해해, 남의 시선과 때로는 상처 주는 전통들을 마주하는 건 쉽지 않았잖아.</p>
+<p>이 메시지는 내가 가까이 간직하는 진리야 — 힘든 날들을 함께 이겨낸 복음, 우리를 묶어주고 미래에 대한 희망을 주는 메시지.</p>
 
-<p>우릴 무너뜨리려는 목소리들을 무시하고 우리만의 이야기를 만들어 가자. 이건 우리 둘만의 관계야: 연결된 두 마음, 동기화된 심장. 드물고 소중한 것 — 지키고 즐기고 키워가자.</p>
+<p><span class="highlight">너에 대한 나의 사랑은 신실하고, 변함없고, 인내로워.</span> 나는 오늘도, 또 영원히 네 곁에 있을게.</p>
 
-<p>네가 외롭고, 길을 잃고, 괴로울 때마다 이 편지를 열고 나와 함께 반복해: <span class="highlight">“나는 사랑받고, 존중받고, 소중하다. 내 곁에는 나를 돌봐주고 내 가치를 가르쳐 주며 복음과 은혜를 보여 주는 남자친구가 있다.”</span></p>
+<p>너는 독특하고 특별하며 받아들여진 존재야 — 창조의 왕관, 하나님의 형상으로 지음받았어. 그 누구도 그걸 빼앗지 못하게 해.</p>
 
-<p>소정아, 너는 나의 동반자이자 그리스도 안에서의 자매야. 너는 하나님이 내게 주신 선물이야, 그리고 나는 널 꼭 지킬 것을 약속해. 평생 기다려야 한다면 기쁘게 기다릴게. 내 사랑은 인내하며, 부드럽고 단호해.</p>
+<p>하나님은 용서와 회복과 새 생명을 주셔. 그 진리를 믿고 필요할 때마다 그것으로 힘을 얻어.</p>
 
-<p>이 편지를 간직해. 향수나 두려움이 밀려올 때 읽어 — 피난처가 되어 줄 거야. 우리가 마주하는 날이 오면, 그 순간을 너와 함께 기뻐하며 축하할게.</p>
+<p>향수에 잠기거나 두려울 때 이 편지를 가까이 둬. 그 기분이 올 때 읽어 — 이 편지가 너의 피난처가 되게 해. 우리가 만나는 날이 오면, 나는 온 마음으로 그 순간을 축하할게.</p>
 
 <div class="signature">
-    <span class="highlight">사랑해, 나의 소정아.</span><br>
-    항상, 그리고 영원히.<br><br>
-    오직 너의,<br>
-    아론 🩷
+  <span class="highlight">사랑해, 내 소정.</span><br>
+  항상 그리고 영원히.<br><br>
+  오직 너의,<br>
+  Aaron 🩷
 </div>
 </div>
 </div>
+
 
     
     <!-- Close button -->
@@ -648,7 +739,7 @@
     
     <!-- Copyright -->
     <div class="copyright">
-        © 2025 Aaron E. Obando & 박소정 - Made with 💖 for 소정
+        © 2025 Aaron E. Obando & 박소정 — Made with 💖 for 소정 (foryousojeong) · v2.1
     </div>
     
     <script>
@@ -833,25 +924,40 @@
         }
         
 
-       // -----------------------------
-// Auto-scroll: stop on touch, resume after 5s of inactivity
-// -----------------------------
-let isAutoScrolling = false;
-let autoScrollTimer = null;
-let autoScrollResumeTimer = null;
-const AUTO_SCROLL_RESUME_DELAY = 5000; // 5 segundos
+// Auto-scroll safe for touch devices — permite el scroll nativo y evita bloqueos
+(function () {
+  const letterPaper = document.querySelector('.letter-paper');
+  const closeButton = document.querySelector('.close-button');
+  const heartSeal = document.querySelector('.heart-seal');
+  const instructions = document.querySelector('.instructions');
 
-function startAutoScroll() {
-    // sigue desactivado en pantallas pequeñas por diseño
+  if (!letterPaper) {
+    console.warn('No se encontró .letter-paper — el script de auto-scroll no se activará.');
+    return;
+  }
+
+  let isAutoScrolling = false;
+  let autoScrollTimer = null;
+  let autoScrollResumeTimer = null;
+  const AUTO_SCROLL_RESUME_DELAY = 5000; // 5 segundos
+
+  let touchStartY = 0;
+  let isUserScrolling = false;
+  let isLetterOpen = false; // si lo usas en tu app, sincroniza con tu lógica real
+  let isClosing = false;
+
+  function startAutoScroll() {
+    // no auto-scroll en pantallas pequeñas por diseño
     if (isAutoScrolling || window.innerWidth <= 768) return;
-    // seguridad: limpia timers previos
+
+    // limpia timers previos
     if (autoScrollTimer) {
-        clearInterval(autoScrollTimer);
-        autoScrollTimer = null;
+      clearInterval(autoScrollTimer);
+      autoScrollTimer = null;
     }
     if (autoScrollResumeTimer) {
-        clearTimeout(autoScrollResumeTimer);
-        autoScrollResumeTimer = null;
+      clearTimeout(autoScrollResumeTimer);
+      autoScrollResumeTimer = null;
     }
 
     isAutoScrolling = true;
@@ -860,111 +966,122 @@ function startAutoScroll() {
     const scrollStep = 1;
 
     autoScrollTimer = setInterval(() => {
-        // si hay contenido por desplazar
-        if (scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight) {
-            scrollContainer.scrollTop += scrollStep;
-        } else {
-            // llegó al final
-            if (!closeButton.classList.contains('visible')) {
-                closeButton.classList.add('visible');
-            }
-            clearInterval(autoScrollTimer);
-            autoScrollTimer = null;
-            isAutoScrolling = false;
+      if (scrollContainer.scrollTop < scrollContainer.scrollHeight - scrollContainer.clientHeight) {
+        scrollContainer.scrollTop += scrollStep;
+      } else {
+        if (closeButton && !closeButton.classList.contains('visible')) {
+          closeButton.classList.add('visible');
         }
-    }, 1000 / scrollSpeed);
-}
-
-function stopAutoScroll() {
-    if (autoScrollTimer) {
         clearInterval(autoScrollTimer);
         autoScrollTimer = null;
+        isAutoScrolling = false;
+      }
+    }, 1000 / scrollSpeed);
+  }
+
+  function stopAutoScroll() {
+    if (autoScrollTimer) {
+      clearInterval(autoScrollTimer);
+      autoScrollTimer = null;
     }
     isAutoScrolling = false;
-}
+  }
 
-function scheduleAutoScrollResume() {
-    // si la reanudación ya estaba programada, reinicia el contador
+  function scheduleAutoScrollResume() {
     if (autoScrollResumeTimer) {
-        clearTimeout(autoScrollResumeTimer);
+      clearTimeout(autoScrollResumeTimer);
     }
     autoScrollResumeTimer = setTimeout(() => {
-        autoScrollResumeTimer = null;
-        // solo reanuda si la carta sigue en fullscreen y no está en proceso de cierre
-        if (letterPaper.classList.contains('fullscreen') && !isClosing) {
-            startAutoScroll();
-        }
+      autoScrollResumeTimer = null;
+      // reanuda solo si la carta sigue en fullscreen (o acorde a tu lógica)
+      if (letterPaper.classList.contains('fullscreen') && !isClosing) {
+        startAutoScroll();
+      }
     }, AUTO_SCROLL_RESUME_DELAY);
-}
+  }
 
-// Interacciones del usuario que detienen el auto-scroll y reinician el temporizador de 5s.
-// Incluye touch, pointer, botón del ratón, rueda y teclas.
-const userInteractionEvents = ['touchstart', 'pointerdown', 'mousedown', 'wheel', 'keydown'];
-
-userInteractionEvents.forEach(evt => {
-    letterPaper.addEventListener(evt, (e) => {
-        // si el evento es touch, evita conflictos con handlers que usan touchend
-        // no hacemos preventDefault aquí para no bloquear el scroll manual si se desea
-        stopAutoScroll();
-        scheduleAutoScrollResume();
+  // Eventos que detienen el auto-scroll — todos pasivos para no bloquear el scroll nativo
+  const simpleEvents = ['wheel', 'mousedown', 'pointerdown', 'keydown'];
+  simpleEvents.forEach(evt => {
+    document.addEventListener(evt, () => {
+      stopAutoScroll();
+      scheduleAutoScrollResume();
     }, { passive: true });
-});
+  });
 
-// Si el usuario toca y arrastra (touchmove), mantenemos el comportamiento original
-// (en tu código original había un preventDefault — si quieres permitir desplazamiento
-// manual en touchmove, comenta la línea preventDefault abajo)
-letterPaper.addEventListener('touchmove', (e) => {
-    // Si quieres permitir scroll manual por touch, comenta la siguiente línea:
-    // e.preventDefault();
-}, { passive: false });
+  // Touch handlers: NO impedirán el scroll por defecto.
+  letterPaper.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
+    isUserScrolling = false;
+    // si está en auto-scroll, detenerlo inmediatamente
+    if (isAutoScrolling) {
+      stopAutoScroll();
+    }
+    // no programar reanudo aquí — al final del touch (touchend) lo programamos
+  }, { passive: true });
 
-// Asegurarse de limpiar timers cuando la carta se cierre o se reinicie:
-function resetLetter() {
-    // cancela timers del auto-scroll y resume
+  letterPaper.addEventListener('touchmove', (e) => {
+    // NO hacemos e.preventDefault() — permitimos el scrolling nativo
+    // Detectamos si el usuario está moviendo verticalmente para distinguir taps de scrolls
+    const currentY = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
+    const deltaY = Math.abs(currentY - touchStartY);
+    if (deltaY > 6) { // umbral razonable para considerar "scroll"
+      isUserScrolling = true;
+      stopAutoScroll();
+    }
+    // programamos reanudar cuando el usuario deje de tocar (touchend) — no aquí
+  }, { passive: true });
+
+  letterPaper.addEventListener('touchend', () => {
+    // Si hubo un scroll por touch, programamos reanudar auto-scroll tras el delay
+    if (isUserScrolling) {
+      scheduleAutoScrollResume();
+    } else {
+      // fue un tap (no desplazamiento): también detener y programar reanudar
+      stopAutoScroll();
+      scheduleAutoScrollResume();
+    }
+    // reset state ligero
+    setTimeout(() => { isUserScrolling = false; }, 300);
+  }, { passive: true });
+
+  // Si cierras la carta / reseteas, limpiar timers
+  function resetLetter() {
     if (autoScrollTimer) {
-        clearInterval(autoScrollTimer);
-        autoScrollTimer = null;
+      clearInterval(autoScrollTimer);
+      autoScrollTimer = null;
     }
     if (autoScrollResumeTimer) {
-        clearTimeout(autoScrollResumeTimer);
-        autoScrollResumeTimer = null;
+      clearTimeout(autoScrollResumeTimer);
+      autoScrollResumeTimer = null;
     }
-
-    clickCount = 0;
+    // restablece estados (ajusta según tu lógica)
+    isAutoScrolling = false;
+    isUserScrolling = false;
     isLetterOpen = false;
     isClosing = false;
-    isAutoScrolling = false;
-    heartSeal.style.display = 'flex';
-    heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
-    instructions.style.display = 'block';
-}
-        
-        // Improved touch handling for mobile
-        let touchStartY = 0;
-        let touchStartTime = 0;
-        
-        letterPaper.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-            touchStartTime = Date.now();
-            if (isAutoScrolling) {
-                clearInterval(autoScrollTimer);
-                isAutoScrolling = false;
-            }
-        }, { passive: true });
-        
-        letterPaper.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-        
-        // Prevent double-tap zoom on mobile
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
+    // restaurar UI si existen los elementos
+    if (heartSeal) {
+      heartSeal.style.display = 'flex';
+      heartSeal.classList.remove('crack-1', 'crack-2', 'crack-3');
+    }
+    if (instructions) instructions.style.display = 'block';
+  }
+
+  // Exponer funciones si quieres controlarlas desde fuera (opcional)
+  window._letterAutoScroll = {
+    start: startAutoScroll,
+    stop: stopAutoScroll,
+    reset: resetLetter,
+    scheduleResume: scheduleAutoScrollResume
+  };
+
+  // -- Inicio opcional: si la carta ya está en fullscreen al cargar, arrancar auto-scroll
+  if (letterPaper.classList.contains('fullscreen')) {
+    startAutoScroll();
+  }
+})();
+
         
         // Create particle effects with mobile optimization
         function createHeartParticles() {
@@ -1123,6 +1240,85 @@ function resetLetter() {
             }, 100);
         });
         
+        (function () {
+  const letterPaper = document.querySelector('.letter-paper');
+  const closeButton = document.querySelector('.close-button');
+
+  if (!letterPaper || !closeButton) return;
+
+  // Ocultar de inmediato, antes de medir nada
+  closeButton.style.display = 'none';
+
+  const BOTTOM_THRESHOLD_PX = 8;
+  let rafId = null;
+  let hasUserScrolled = false;
+
+  function checkIfScrolledToEnd() {
+    if (!hasUserScrolled) return;
+
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    rafId = requestAnimationFrame(() => {
+      const atBottom = (letterPaper.scrollTop + letterPaper.clientHeight) >= (letterPaper.scrollHeight - BOTTOM_THRESHOLD_PX);
+
+      if (atBottom) {
+        closeButton.style.display = ''; // vuelve al valor por defecto
+        closeButton.classList.add('visible');
+      } else {
+        closeButton.classList.remove('visible');
+        closeButton.style.display = 'none';
+      }
+    });
+  }
+
+  letterPaper.addEventListener('scroll', () => {
+    hasUserScrolled = true;
+    checkIfScrolledToEnd();
+  }, { passive: true });
+
+  window.addEventListener('resize', checkIfScrolledToEnd, { passive: true });
+  window.addEventListener('orientationchange', checkIfScrolledToEnd, { passive: true });
+
+  const mo = new MutationObserver(() => {
+    if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 60);
+  });
+  mo.observe(letterPaper, { childList: true, subtree: true, characterData: true });
+
+  const imgs = letterPaper.querySelectorAll('img');
+  imgs.forEach(img => {
+    if (!img.complete) {
+      img.addEventListener('load', () => {
+        if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 40);
+      }, { passive: true });
+      img.addEventListener('error', () => {
+        if (hasUserScrolled) setTimeout(checkIfScrolledToEnd, 40);
+      }, { passive: true });
+    }
+  });
+
+  const classObserver = new MutationObserver(mutations => {
+    if (!hasUserScrolled) return;
+    for (const m of mutations) {
+      if (m.attributeName === 'class') {
+        setTimeout(checkIfScrolledToEnd, 40);
+        break;
+      }
+    }
+  });
+  classObserver.observe(letterPaper, { attributes: true });
+
+  window._checkLetterCloseVisibility = checkIfScrolledToEnd;
+  window._cleanupLetterCloseVisibility = function () {
+    letterPaper.removeEventListener('scroll', checkIfScrolledToEnd);
+    window.removeEventListener('resize', checkIfScrolledToEnd);
+    window.removeEventListener('orientationchange', checkIfScrolledToEnd);
+    mo.disconnect();
+    classObserver.disconnect();
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  };
+})();
     </script>
 </body>
 </html>
