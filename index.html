@@ -68,14 +68,13 @@
             z-index: 10;
         }
         
-/* Envelope styling */
+/* make envelope size easy to override per breakpoint */
 .envelope {
-    position: relative;
-    width: 280px;
-    height: 180px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    transform-style: preserve-3d;
+  --env-w: 280px;
+  --env-h: 180px;
+  width: var(--env-w);
+  height: var(--env-h);
+  position: relative; /* keep as you had */
 }
 
 .envelope:hover {
@@ -197,12 +196,12 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 260px;
+  width: auto;
   height: auto;
 
   /* usamos max-* para animaciones más suaves */
-  max-width: 260px;
-  max-height: 170px;
+  max-width: min(92vw, 640px);
+  max-height: min(86vh, 520px);
   box-sizing: border-box;
 
   background: linear-gradient(135deg, #FFFBF0 0%, #FFF8DC 100%);
@@ -236,8 +235,8 @@
 /* Estado "expanding" (visible) — anima desde los max-* hacia valores mayores */
 .letter-paper.expanding {
   /* límites finales (animamos max-*, no width/height fijos) */
-  max-width: min(900px, 92vw);
-  max-height: min(720px, 86vh);
+  max-width: min(92vw, 900px);
+  max-height: min(86vh, 720px);
 
   /* opcional: cuando se vea grande, permitir que el elemento crezca dinámicamente */
   width: auto;
@@ -306,7 +305,7 @@
 /* Titular y párrafos (sin cambios funcionales, solo pequeños refinamientos) */
 .letter-content h1 {
   font-family: 'Cute Font', cursive;
-  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.6rem, 2.4vw, 3rem);
   color: #FF1493;
   text-align: center;
   margin-bottom: 18px;
@@ -356,7 +355,7 @@
             background: linear-gradient(135deg, #FF69B4, #FF1493);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: clamp(10px, 2vw, 14px) clamp(18px, 4vw, 30px);
             border-radius: 25px;
             font-family: 'Poor Story', cursive;
             font-size: 1rem;
