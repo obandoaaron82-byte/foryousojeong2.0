@@ -522,16 +522,12 @@ body {
   user-select: none;
 }
 
-/* -------------------------
-   Fullscreen responsive: mobile phones / small screens
-   ------------------------- */
 @media (max-width: 600px), (max-height: 600px) {
-  /* Evitar scroll del fondo cuando el modal está abierto */
   .body--modal-open { 
-    overflow: hidden; 
+    overflow: hidden;
+    touch-action: none; /* Bloquear scroll de fondo */
   }
 
-  /* CORREGIDO: Forzar que el paper ocupe todo el viewport pero manteniendo funcionalidad */
   .letter-paper.expanding,
   .letter-paper.fullscreen {
     position: fixed;
@@ -541,7 +537,6 @@ body {
     height: 100vh !important;
     max-width: 100vw !important;
     max-height: 100vh !important;
-    /* QUITAMOS transform: none que rompía la funcionalidad */
     transform: translate(0, 0) !important;
     border-radius: 0 !important;
     padding: max(16px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
@@ -550,45 +545,42 @@ body {
     opacity: 1;
     pointer-events: auto;
     filter: blur(0);
-    overflow: auto;
+    overflow: hidden; /* Controlar el scroll solo en el interior */
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    touch-action: auto; /* Permitir scroll táctil */
   }
 
-  /* Ajuste del contenido interior para usar toda la altura disponible */
   .letter-paper.expanding .letter-content,
   .letter-paper.fullscreen .letter-content {
     height: calc(100vh - 76px);
     max-height: calc(100vh - 76px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Mejora scroll en iOS */
+    touch-action: pan-y; /* Solo vertical */
     padding-right: max(12px, env(safe-area-inset-right));
     padding-left: max(12px, env(safe-area-inset-left));
   }
 
-  /* CORREGIDO: Reubicar el botón de cerrar pero sin afectar su transform base */
   .close-button {
     position: fixed;
     right: max(12px, env(safe-area-inset-right));
     top: max(10px, env(safe-area-inset-top));
-    bottom: auto;
-    left: auto;
-    /* Mantenemos transform funcional para hover/focus */
     transform: none;
     padding: 10px 14px;
     border-radius: 999px;
     opacity: 1;
     z-index: 1200;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    touch-action: manipulation; /* Evita retraso de 300ms */
   }
 
-  /* Hover states ajustados para mobile */
   .close-button:hover,
-  .close-button:focus-visible{
+  .close-button:focus-visible {
     transform: scale(1.05);
     box-shadow: 0 8px 20px rgba(255,105,180,0.6);
   }
 
-  /* Asegurar que el "thank-you" se vea centrado y adaptado */
   .thank-you {
     width: calc(100% - 32px);
     max-width: 360px;
@@ -596,18 +588,17 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
     padding: 18px;
+    touch-action: manipulation;
   }
 
   .thank-you.visible {
     transform: translate(-50%, -50%) scale(1);
   }
 
-  /* CORREGIDO: No aplicar transform: none al envelope ya que rompe hover/interacción */
   .envelope:hover {
     transform: translateY(-2px) scale(1.01);
   }
 
-  /* Ajustar tamaños de fuente para móviles */
   .letter-content {
     font-size: clamp(0.9rem, 3.5vw, 1rem);
   }
@@ -616,7 +607,6 @@ body {
     font-size: clamp(1.4rem, 5vw, 1.8rem);
   }
 
-  /* Mejorar espaciado en móviles */
   .container {
     padding: 20px 15px;
   }
@@ -627,12 +617,11 @@ body {
   }
 }
 
-/* Media query adicional para pantallas muy pequeñas */
 @media (max-width: 360px) {
   .letter-content {
     font-size: 0.85rem;
   }
-  
+
   .close-button {
     padding: 8px 12px;
     font-size: 0.9rem;
