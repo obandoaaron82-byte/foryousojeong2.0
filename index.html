@@ -523,16 +523,81 @@ body {
 }
 
 /* -------------------------
-   Responsive tweaks (opcional)
+   Fullscreen responsive: mobile phones / small screens
    ------------------------- */
-@media (max-width: 420px) {
-  :root { --envelope-w: 220px; }
-  .heart-seal { width:60px; height:60px; font-size:2.1rem; top: calc(50% - 4px); }
-  .close-button { padding: 10px 18px; font-size:0.95rem; bottom: 64px; }
-  .instructions { font-size: 1rem; bottom: 36px; }
+@media (max-width: 600px), (max-height: 600px) {
+  /* Evitar scroll del fondo cuando el modal está abierto */
+  .body--modal-open { overflow: hidden; }
+
+  /* Forzar que el paper ocupe todo el viewport */
+  .letter-paper.expanding,
+  .letter-paper.fullscreen {
+    position: fixed;
+    /* inset usa top/right/bottom/left en una sola línea y respeta safe-area */
+    inset: 0;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    transform: none !important; /* quitar transform centrar para evitar desajustes */
+    border-radius: 0 !important;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
+    box-shadow: none;
+    border: 0;
+    opacity: 1;
+    pointer-events: auto;
+    filter: blur(0);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Ajuste del contenido interior para usar toda la altura disponible */
+  .letter-paper.expanding .letter-content,
+  .letter-paper.fullscreen .letter-content {
+    /* descontar espacio para el header/close button (ajusta si haces cabeceras) */
+    height: calc(100vh - 76px);
+    max-height: calc(100vh - 76px);
+    overflow-y: auto;
+    padding-right: calc(12px + env(safe-area-inset-right, 0px));
+    padding-left: calc(12px + env(safe-area-inset-left, 0px));
+  }
+
+  /* Si no está expandido, mantenemos su comportamiento predeterminado (pequeño) */
+  /*.letter-paper:not(.expanding) {
+    /* opcional: dejar como estaba, o esconder */
+  
+
+  /* Reubicar el botón de cerrar a la esquina superior derecha (más usable en móviles) */
+  .close-button {
+    left: auto;
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    top: calc(10px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    transform: none;
+    padding: 10px 14px;
+    border-radius: 999px;
+    opacity: 1;
+    z-index: 1200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+
+  /* Asegurar que el "thank-you" se vea centrado y adaptado */
+  .thank-you {
+    width: calc(100% - 32px);
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    max-width: 720px;
+    padding: 18px;
+  }
+
+  /* Pequeños ajustes visuales para elementos del sobre */
+  .envelope {
+    transform: none;
+  }
 }
-
-
     </style>
 </head>
 <body>
@@ -1225,9 +1290,6 @@ body {
     if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
   };
 })();
-
-
-
     </script>
 </body>
 </html>
